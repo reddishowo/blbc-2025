@@ -1,0 +1,64 @@
+name: sppdn
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0' # Perluas jangkauan SDK agar lebih fleksibel
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Core
+  cupertino_icons: ^1.0.8
+  get: ^4.6.6 # PERBAIKAN: Versi stabil yang benar
+
+  # Firebase - Versi stabil dan kompatibel
+  firebase_core: ^2.27.1
+  firebase_auth: ^4.17.9
+  cloud_firestore: ^4.15.9
+  # firebase_storage: ^11.6.10
+  google_sign_in: ^6.2.1 # REKOMENDASI: Versi stabil terbaru
+  flutter_launcher_icons: ^0.13.1 
+
+  http: ^1.2.1
+
+  # Utilitas
+  flutter_native_splash: ^2.4.0 # Sesuaikan dengan versi SDK, 2.4.0 lebih aman
+  image_picker: ^1.0.7
+  flutter_image_compress: ^2.2.0
+  intl: ^0.19.0
+  cached_network_image: ^3.3.1
+  path_provider: ^2.1.2 # Tambahkan path_provider yang mungkin terlewat
+  photo_view: ^0.15.0
+  get_storage: ^2.1.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^3.0.0 # PERBAIKAN: Versi stabil yang benar
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/logo.png
+  android_12:
+    image: assets/logo.png
+    color: "#FFFFFF"
+  android: true
+  ios: true
+  web: false
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/google_logo.png
+    - assets/logo.png
+
+flutter_launcher_icons:
+  android: true # Kita ingin membuat ikon untuk Android
+  ios: true # Anda juga bisa sekalian membuatnya untuk iOS
+  image_path: "assets/logo.png" # Path ke file logo Anda
+  min_sdk_android: 21 # Sesuaikan dengan minSdk di build.gradle Anda jika perlu

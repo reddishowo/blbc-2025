@@ -1,0 +1,118 @@
+{
+  "project_info": {
+    "project_number": "62687958094",
+    "project_id": "blbc-base",
+    "storage_bucket": "blbc-base.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:62687958094:android:d7006f9e47fc850cfd1f1f",
+        "android_client_info": {
+          "package_name": "com.blbc.go.id"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "62687958094-q6rkurp9pe0t7642hi44723fvj2645oa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWna50DJOukY5NnP1YnIGYgvs1Q4dBwOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "62687958094-q6rkurp9pe0t7642hi44723fvj2645oa.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "62687958094-7gvkb22948hn6c4287iukait027p594g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.blbc.go.id.blbc2025"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:62687958094:android:1907576e1bb76cbcfd1f1f",
+        "android_client_info": {
+          "package_name": "com.blbc.go.id.blbc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "62687958094-q6rkurp9pe0t7642hi44723fvj2645oa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWna50DJOukY5NnP1YnIGYgvs1Q4dBwOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "62687958094-q6rkurp9pe0t7642hi44723fvj2645oa.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "62687958094-7gvkb22948hn6c4287iukait027p594g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.blbc.go.id.blbc2025"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:62687958094:android:a29ba3d7101120c8fd1f1f",
+        "android_client_info": {
+          "package_name": "com.blbc.go.id.blbc_2025"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "62687958094-q6rkurp9pe0t7642hi44723fvj2645oa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWna50DJOukY5NnP1YnIGYgvs1Q4dBwOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "62687958094-q6rkurp9pe0t7642hi44723fvj2645oa.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "62687958094-7gvkb22948hn6c4287iukait027p594g.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.blbc.go.id.blbc2025"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
