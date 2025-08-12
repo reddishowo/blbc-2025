@@ -50,34 +50,4 @@ class HomeController extends GetxController {
     );
   }
 
-  // Placeholder for the "Delete Account" functionality
-  void deleteAccount() {
-    // 3. Use the scaffoldKey here as well
-    if (scaffoldKey.currentState?.isDrawerOpen ?? false) {
-      Get.back(); // Close the drawer
-    }
-    Get.dialog(
-      AlertDialog(
-        title: const Text('Delete Account', style: TextStyle(color: Colors.red)),
-        content: const Text(
-            'This action is irreversible and will permanently delete your account and all associated data. Are you sure you want to continue?'),
-        actions: [
-          TextButton(
-            child: const Text('Cancel'),
-            onPressed: () => Get.back(),
-          ),
-          TextButton(
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
-            onPressed: () {
-              // Here you would call the method in AuthController
-              // For example: AuthController.instance.deleteUserAccount();
-              Get.back(); // Close dialog
-              Get.snackbar('Success', 'Delete account request sent.',
-                  snackPosition: SnackPosition.BOTTOM);
-            },
-          ),
-        ],
-      ),
-    );
-  }
 }

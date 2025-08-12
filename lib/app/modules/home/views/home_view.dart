@@ -74,15 +74,7 @@ class HomeView extends GetView<HomeController> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
-                _buildDrawerItem(icon: Icons.summarize_outlined, text: 'Rekap Presensi', onTap: () {}),
-                _buildDrawerItem(icon: Icons.poll_outlined, text: 'Survey per Pegawai', onTap: () {}),
-                _buildDrawerItem(icon: Icons.leaderboard_outlined, text: 'Ranking Olahraga', onTap: () {}),
-                _buildDrawerItem(icon: Icons.business_center_outlined, text: 'Rekap Lembur', onTap: () {}),
-                _buildDrawerItem(icon: Icons.library_books_outlined, text: 'Library ISO', onTap: () {}),
-                const Divider(),
                 _buildDrawerItem(icon: Icons.info_outline_rounded, text: 'About', onTap: () {}),
-                _buildDrawerItem(icon: Icons.share_outlined, text: 'Share', onTap: () {}),
-                _buildDrawerItem(icon: Icons.apps_outlined, text: 'App Gallery', onTap: () {}),
               ],
             ),
           ),
@@ -92,12 +84,6 @@ class HomeView extends GetView<HomeController> {
             icon: Icons.logout,
             text: 'Log Out',
             onTap: controller.logout,
-          ),
-          _buildDrawerItem(
-            icon: Icons.delete_forever_outlined,
-            text: 'Delete My Account',
-            color: Colors.red,
-            onTap: controller.deleteAccount,
           ),
           const SizedBox(height: 20),
         ],

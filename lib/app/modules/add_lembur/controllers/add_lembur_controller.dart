@@ -9,10 +9,11 @@ import 'package:sppdn/app/modules/auth/controllers/auth_controller.dart';
 
 class AddLemburController extends GetxController {
   // --- START: IMAGEKIT CONFIGURATION ---
+  // TODO: Replace with your actual credentials from the ImageKit.io dashboard
   // ignore: unused_field
-  final String _imageKitPublicKey = "API";
-  final String _imageKitPrivateKey = "API";
-  final String _imageKitUrlEndpoint = "https://upload.imagekit.io/api/v1/files/upload"; 
+  final String _imageKitPublicKey = "your_public_key";
+  final String _imageKitPrivateKey = "your_private_key";
+  final String _imageKitUrlEndpoint = "https://upload.imagekit.io/api/v1/files/upload"; // This is the correct UPLOAD URL
   // --- END: IMAGEKIT CONFIGURATION ---
 
   // Form and text editing controllers
