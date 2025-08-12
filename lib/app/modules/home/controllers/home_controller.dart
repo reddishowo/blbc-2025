@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:sppdn/app/modules/lembur/views/lembur_view.dart';
+import 'package:sppdn/app/modules/presensi/views/presensi_view.dart'; // Add this import
 import '../../auth/controllers/auth_controller.dart';
 
 class HomeController extends GetxController {
@@ -13,7 +14,7 @@ class HomeController extends GetxController {
   // A list of widget options to be displayed in the body based on the selected tab
   static final List<Widget> widgetOptions = <Widget>[
     const LemburView(),
-    const Center(child: Text('Presensi Page')),
+    const PresensiView(), // Replace the placeholder with the actual PresensiView
     const Center(child: Text('Bukti Kegiatan Page')),
     const Center(child: Text('Ayo Olahraga Page')),
     const Center(child: Text('Lapor Prestasi Page')),
@@ -49,5 +50,4 @@ class HomeController extends GetxController {
       ),
     );
   }
-
 }

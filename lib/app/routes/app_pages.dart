@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 
 import '../modules/add_lembur/bindings/add_lembur_binding.dart';
 import '../modules/add_lembur/views/add_lembur_view.dart';
+import '../modules/add_presensi/bindings/add_presensi_binding.dart';
+import '../modules/add_presensi/views/add_presensi_view.dart';
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
@@ -9,6 +11,8 @@ import '../modules/lembur/bindings/lembur_binding.dart';
 import '../modules/lembur/views/lembur_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
+import '../modules/presensi/bindings/presensi_binding.dart';
+import '../modules/presensi/views/presensi_view.dart';
 import '../modules/register/bindings/register_binding.dart';
 import '../modules/register/views/register_view.dart';
 
@@ -51,5 +55,16 @@ class AppPages {
       page: () => const AddLemburView(),
       binding: AddLemburBinding(),
     ),
+    GetPage(
+      name: _Paths.PRESENSI,
+      page: () => const PresensiView(),
+      binding: PresensiBinding(),
+    ),
+    GetPage(
+      name: _Paths.ADD_PRESENSI,
+      page: () => const AddPresensiView(),
+      binding: AddPresensiBinding(),
+    ),
+    
   ];
 }

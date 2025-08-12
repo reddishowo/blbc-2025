@@ -8,6 +8,8 @@ abstract class Routes {
   // Tambahkan route baru
   static const LEMBUR = _Paths.LEMBUR;
   static const ADD_LEMBUR = _Paths.ADD_LEMBUR;
+  static const PRESENSI = _Paths.PRESENSI;
+  static const ADD_PRESENSI = _Paths.ADD_PRESENSI;
 }
 
 abstract class _Paths {
@@ -18,4 +20,6 @@ abstract class _Paths {
   // Tambahkan path baru
   static const LEMBUR = '/lembur';
   static const ADD_LEMBUR = '/add-lembur';
+  static const PRESENSI = '/presensi';
+  static const ADD_PRESENSI = '/add-presensi';
 }
