@@ -14,7 +14,7 @@ class LemburView extends GetView<LemburController> {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator());
         }
-        
+
         if (controller.lemburList.isEmpty) {
           return const Center(
             child: Text(
@@ -29,45 +29,43 @@ class LemburView extends GetView<LemburController> {
           itemCount: controller.lemburList.length,
           itemBuilder: (context, index) {
             final lembur = controller.lemburList[index];
-            final formattedDate = DateFormat('EEEE, d MMMM yyyy', 'id_ID').format(lembur.date.toDate());
+            final formattedDate = DateFormat('EEEE, d MMMM yyyy', 'id_ID')
+                .format(lembur.date.toDate());
+
+            // **[MODIFIED]** The subtitle now always includes the user's name.
+            final subtitleText =
+                '${lembur.userName}\n$formattedDate\nJam: ${lembur.startTime} - ${lembur.endTime}';
 
             return Card(
               elevation: 3,
               margin: const EdgeInsets.symmetric(vertical: 8.0),
               child: ListTile(
-                contentPadding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                
-                // --- START OF CHANGES ---
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
                 leading: SizedBox(
-                  width: 60,  // Constrain the width of the leading area
-                  height: 60, // Constrain the height of the leading area
+                  width: 60,
+                  height: 60,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8.0),
                     child: Image.network(
                       lembur.photoUrl,
                       fit: BoxFit.cover,
-                      // The width and height properties are now controlled by the parent SizedBox
                       loadingBuilder: (context, child, loadingProgress) {
                         if (loadingProgress == null) return child;
                         return const Center(child: CircularProgressIndicator());
                       },
                       errorBuilder: (context, error, stackTrace) {
-                        // Wrapping the Icon in a Center looks better
                         return const Center(child: Icon(Icons.broken_image));
                       },
                     ),
                   ),
                 ),
-                // --- END OF CHANGES ---
-
                 title: Text(
                   lembur.activityType,
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                subtitle: Text(
-                  '$formattedDate\nJam: ${lembur.startTime} - ${lembur.endTime}',
-                ),
-                isThreeLine: true,
+                subtitle: Text(subtitleText), // Use the updated subtitle text
+                isThreeLine: true, // Keep as true to allow for multiple lines
               ),
             );
           },

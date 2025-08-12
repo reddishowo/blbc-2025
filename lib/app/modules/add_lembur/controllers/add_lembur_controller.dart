@@ -11,8 +11,8 @@ class AddLemburController extends GetxController {
   // --- START: IMAGEKIT CONFIGURATION ---
   // TODO: Replace with your actual credentials from the ImageKit.io dashboard
   // ignore: unused_field
-  final String _imageKitPublicKey = "your_public_key";
-  final String _imageKitPrivateKey = "your_private_key";
+  final String _imageKitPublicKey = "public_xRFYsXAzsF/dD3ODvbb9wGPX3m4=";
+  final String _imageKitPrivateKey = "private_nzy2ayDdr+hBnvuWhE2+KcTSmOk=";
   final String _imageKitUrlEndpoint = "https://upload.imagekit.io/api/v1/files/upload"; // This is the correct UPLOAD URL
   // --- END: IMAGEKIT CONFIGURATION ---
 
