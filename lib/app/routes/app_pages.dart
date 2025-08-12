@@ -1,22 +1,26 @@
-// ignore_for_file: constant_identifier_names
-
 import 'package:get/get.dart';
 
-// Import all necessary bindings and views
+import '../modules/add_lembur/bindings/add_lembur_binding.dart';
+import '../modules/add_lembur/views/add_lembur_view.dart';
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/lembur/bindings/lembur_binding.dart';
+import '../modules/lembur/views/lembur_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
 import '../modules/register/bindings/register_binding.dart';
 import '../modules/register/views/register_view.dart';
+
+// ignore_for_file: constant_identifier_names
+
+// Import all necessary bindings and views
 
 part 'app_routes.dart';
 
 class AppPages {
   AppPages._();
 
-  // The initial route is HOME, but AuthController will redirect if not logged in.
   static const INITIAL = Routes.HOME;
 
   static final routes = [
@@ -24,7 +28,6 @@ class AppPages {
       name: _Paths.HOME,
       page: () => const HomeView(),
       binding: HomeBinding(),
-      // Use a binding that also ensures the AuthController is ready
       bindings: [AuthBinding(), HomeBinding()],
     ),
     GetPage(
@@ -36,6 +39,17 @@ class AppPages {
       name: _Paths.REGISTER,
       page: () => const RegisterView(),
       binding: RegisterBinding(),
+    ),
+    // Tambahkan GetPage baru
+    GetPage(
+      name: _Paths.LEMBUR,
+      page: () => const LemburView(),
+      binding: LemburBinding(),
+    ),
+    GetPage(
+      name: _Paths.ADD_LEMBUR,
+      page: () => const AddLemburView(),
+      binding: AddLemburBinding(),
     ),
   ];
 }

@@ -19,15 +19,13 @@ dependencies:
   firebase_core: ^2.27.1
   firebase_auth: ^4.17.9
   cloud_firestore: ^4.15.9
-  # firebase_storage: ^11.6.10
   google_sign_in: ^6.2.1 # REKOMENDASI: Versi stabil terbaru
   flutter_launcher_icons: ^0.13.1 
-
+  image_picker: ^1.1.2 # For picking images from gallery/camera
   http: ^1.2.1
 
   # Utilitas
   flutter_native_splash: ^2.4.0 # Sesuaikan dengan versi SDK, 2.4.0 lebih aman
-  image_picker: ^1.0.7
   flutter_image_compress: ^2.2.0
   intl: ^0.19.0
   cached_network_image: ^3.3.1

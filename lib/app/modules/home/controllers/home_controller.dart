@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:sppdn/app/modules/lembur/views/lembur_view.dart';
 import '../../auth/controllers/auth_controller.dart';
 
 class HomeController extends GetxController {
@@ -11,7 +12,7 @@ class HomeController extends GetxController {
 
   // A list of widget options to be displayed in the body based on the selected tab
   static final List<Widget> widgetOptions = <Widget>[
-    const Center(child: Text('Lembur Page')),
+    const LemburView(),
     const Center(child: Text('Presensi Page')),
     const Center(child: Text('Bukti Kegiatan Page')),
     const Center(child: Text('Ayo Olahraga Page')),

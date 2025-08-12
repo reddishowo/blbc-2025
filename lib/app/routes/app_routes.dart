@@ -1,14 +1,13 @@
-// ignore_for_file: constant_identifier_names
-
 part of 'app_pages.dart';
-// DO NOT EDIT. This is code generated via package:get_cli/get_cli.dart
 
 abstract class Routes {
   Routes._();
   static const HOME = _Paths.HOME;
   static const LOGIN = _Paths.LOGIN;
   static const REGISTER = _Paths.REGISTER;
-  // AUTH route is not needed as a page, but as a controller binding.
+  // Tambahkan route baru
+  static const LEMBUR = _Paths.LEMBUR;
+  static const ADD_LEMBUR = _Paths.ADD_LEMBUR;
 }
 
 abstract class _Paths {
@@ -16,4 +15,7 @@ abstract class _Paths {
   static const HOME = '/home';
   static const LOGIN = '/login';
   static const REGISTER = '/register';
+  // Tambahkan path baru
+  static const LEMBUR = '/lembur';
+  static const ADD_LEMBUR = '/add-lembur';
 }
