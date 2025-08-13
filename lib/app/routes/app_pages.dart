@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 
 import '../modules/add_lembur/bindings/add_lembur_binding.dart';
 import '../modules/add_lembur/views/add_lembur_view.dart';
+import '../modules/add_olahraga/bindings/add_olahraga_binding.dart';
+import '../modules/add_olahraga/views/add_olahraga_view.dart';
 import '../modules/add_presensi/bindings/add_presensi_binding.dart';
 import '../modules/add_presensi/views/add_presensi_view.dart';
 import '../modules/auth/bindings/auth_binding.dart';
@@ -11,6 +13,8 @@ import '../modules/lembur/bindings/lembur_binding.dart';
 import '../modules/lembur/views/lembur_view.dart';
 import '../modules/login/bindings/login_binding.dart';
 import '../modules/login/views/login_view.dart';
+import '../modules/olahraga/bindings/olahraga_binding.dart';
+import '../modules/olahraga/views/olahraga_view.dart';
 import '../modules/presensi/bindings/presensi_binding.dart';
 import '../modules/presensi/views/presensi_view.dart';
 import '../modules/register/bindings/register_binding.dart';
@@ -65,6 +69,15 @@ class AppPages {
       page: () => const AddPresensiView(),
       binding: AddPresensiBinding(),
     ),
-    
+    GetPage(
+      name: _Paths.OLAHRAGA,
+      page: () => const OlahragaView(),
+      binding: OlahragaBinding(),
+    ),
+    GetPage(
+      name: _Paths.ADD_OLAHRAGA,
+      page: () => const AddOlahragaView(),
+      binding: AddOlahragaBinding(),
+    ),
   ];
 }
