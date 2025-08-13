@@ -30,6 +30,34 @@ class AddPresensiView extends GetView<AddPresensiController> {
                     ),
                     const SizedBox(height: 16),
                     
+                    // Time field - read only, automatically shows current time
+                    TextField(
+                      controller: controller.timeController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        labelText: 'Waktu (Otomatis)',
+                        border: OutlineInputBorder(),
+                        suffixIcon: Icon(Icons.access_time),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
+                    // Location field
+                    TextField(
+                      controller: controller.locationController,
+                      readOnly: true,
+                      maxLines: 2,
+                      decoration: InputDecoration(
+                        labelText: 'Lokasi',
+                        border: const OutlineInputBorder(),
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.refresh),
+                          onPressed: controller.refreshLocation,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    
                     // Kehadiran Dropdown
                     const Text(
                       'Kehadiran',

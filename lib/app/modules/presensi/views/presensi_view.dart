@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart'; // Import for date formatting
 import '../controllers/presensi_controller.dart';
 
 class PresensiView extends GetView<PresensiController> {
@@ -24,7 +25,7 @@ class PresensiView extends GetView<PresensiController> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              // Top row with name and delete button
+                              // Top row with name and time
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
@@ -37,16 +38,40 @@ class PresensiView extends GetView<PresensiController> {
                                       ),
                                     ),
                                   ),
-                                  IconButton(
-                                    icon: const Icon(Icons.delete, color: Colors.red),
-                                    onPressed: () => controller.deletePresensi(presensi.id!),
-                                    padding: EdgeInsets.zero,
-                                    constraints: const BoxConstraints(),
-                                  ),
+                                  // Format and display time if available
+                                  if (presensi.time != null)
+                                    Text(
+                                      DateFormat('HH:mm, dd MMM').format(presensi.time!),
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 12,
+                                      ),
+                                    ),
                                 ],
                               ),
                               
-                              const SizedBox(height: 8),
+                              // Location if available
+                              if (presensi.location != null && presensi.location!.isNotEmpty)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 8.0),
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                                      const SizedBox(width: 4),
+                                      Expanded(
+                                        child: Text(
+                                          presensi.location!,
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               
                               // Details row in a more compact format
                               Row(
@@ -55,11 +80,11 @@ class PresensiView extends GetView<PresensiController> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        _buildDetailRow('Kehadiran', presensi.kehadiran),
+                                        _buildDetailRow('kehadiran', presensi.kehadiran),
                                         const SizedBox(height: 4),
-                                        _buildDetailRow('Status', presensi.status),
+                                        _buildDetailRow('status', presensi.status),
                                         const SizedBox(height: 4),
-                                        _buildDetailRow('Keterangan', presensi.keterangan),
+                                        _buildDetailRow('ket', presensi.keterangan),
                                       ],
                                     ),
                                   ),
@@ -99,7 +124,7 @@ class PresensiView extends GetView<PresensiController> {
     );
   }
   
-  // Helper method to build detail rows
+  // Updated helper method to build detail rows with better alignment
   Widget _buildDetailRow(String label, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,11 +132,18 @@ class PresensiView extends GetView<PresensiController> {
         SizedBox(
           width: 80,
           child: Text(
-            '$label:',
+            '$label',
             style: const TextStyle(
               fontWeight: FontWeight.w500,
               color: Colors.black54,
             ),
+          ),
+        ),
+        Text(
+          ': ',
+          style: const TextStyle(
+            fontWeight: FontWeight.w500,
+            color: Colors.black54,
           ),
         ),
         Expanded(

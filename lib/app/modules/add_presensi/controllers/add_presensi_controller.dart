@@ -5,36 +5,147 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart'; // Import for date formatting
+import 'package:geolocator/geolocator.dart'; // Import for location
+import 'package:geocoding/geocoding.dart'; // Import for geocoding
 import '../../auth/controllers/auth_controller.dart';
 import '../../presensi/controllers/presensi_controller.dart';
 
 class AddPresensiController extends GetxController {
   // --- START: IMAGEKIT CONFIGURATION ---
-  // Using the same credentials as the lembur controller
-  final String _imageKitPrivateKey = "private_nzy2ayDdr+hBnvuWhE2+KcTSmOk=";
+  final String _imageKitPrivateKey = "private_B1P/hxK26SuOiV9GcgAOjYD60RI=";
   final String _imageKitUrlEndpoint = "https://upload.imagekit.io/api/v1/files/upload";
   // --- END: IMAGEKIT CONFIGURATION ---
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final ImagePicker _picker = ImagePicker();
 
+  // Text controllers
   final namaController = TextEditingController();
   final keteranganController = TextEditingController();
-  
+  final timeController = TextEditingController(); // New controller for time
+  final locationController = TextEditingController(); // New controller for location display
+
+  // Reactive variables
   final RxString selectedKehadiran = 'WFH'.obs;
   final RxString selectedStatus = 'SEHAT'.obs;
   final Rxn<XFile> pickedImage = Rxn<XFile>();
   final RxBool isLoading = false.obs;
+  final Rx<DateTime> selectedTime = DateTime.now().obs; // Store the selected time
+  final RxString currentLocation = ''.obs; // Store the current location
 
+  // Options for dropdowns
   final List<String> kehadiranOptions = ['WFH', 'WFO', 'WFHB', 'CUTI', 'ST'];
   final List<String> statusOptions = ['SEHAT', 'SAKIT', 'TIDAK YAKIN'];
 
   @override
   void onInit() {
     super.onInit();
+    requestLocationPermission();
     // Pre-fill user data when the controller is initialized
     final user = AuthController.instance.firebaseUser.value;
     namaController.text = user?.displayName ?? 'User Name Not Found';
+    
+    // Set current time
+    updateCurrentTime();
+    
+    // Get current location
+    _getCurrentLocation();
+  }
+
+  // Request location permission
+  Future<void> requestLocationPermission() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled
+      Get.snackbar('Error', 'Location services are disabled.');
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied
+        Get.snackbar('Error', 'Location permissions are denied');
+        return;
+      }
+    }
+    
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are permanently denied
+      Get.snackbar('Error', 'Location permissions are permanently denied, please enable them in app settings.');
+      return;
+    }
+
+    // When we reach here, permissions are granted
+    refreshLocation();
+  }
+
+  // Update current time method - will be called when form loads and when submitting
+  void updateCurrentTime() {
+    final now = DateTime.now();
+    selectedTime.value = now;
+    timeController.text = DateFormat('HH:mm, dd MMM yyyy').format(now);
+  }
+
+  // Get current location
+  Future<void> _getCurrentLocation() async {
+    try {
+      // Set a fallback location in case we can't get the real one
+      locationController.text = "Location unavailable - check app permissions";
+      
+      // Check location permission
+      try {
+        LocationPermission permission = await Geolocator.checkPermission();
+        if (permission == LocationPermission.denied) {
+          permission = await Geolocator.requestPermission();
+          if (permission == LocationPermission.denied) {
+            Get.snackbar('Error', 'Location permissions are denied');
+            return;
+          }
+        }
+        
+        if (permission == LocationPermission.deniedForever) {
+          Get.snackbar('Error', 'Location permissions are permanently denied');
+          return;
+        }
+        
+        // Get current position
+        isLoading.value = true;
+        Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high
+        );
+        
+        // Get address from coordinates
+        List<Placemark> placemarks = await placemarkFromCoordinates(
+          position.latitude, 
+          position.longitude
+        );
+        
+        if (placemarks.isNotEmpty) {
+          Placemark place = placemarks[0];
+          currentLocation.value = '${place.street}, ${place.subLocality}, ${place.locality}';
+          locationController.text = currentLocation.value;
+        }
+      } catch (e) {
+        // Log the error but continue
+        print('Location error: $e');
+        Get.snackbar('Location Issue', 
+                    'Unable to access location. You can still submit attendance.');
+      }
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // Allow manual refresh of location
+  Future<void> refreshLocation() async {
+    await _getCurrentLocation();
   }
 
   Future<void> submitPresensi() async {
@@ -43,6 +154,9 @@ class AddPresensiController extends GetxController {
       return;
     }
 
+    // Update time to current time at submission
+    updateCurrentTime();
+    
     isLoading.value = true;
     
     try {
@@ -70,6 +184,8 @@ class AddPresensiController extends GetxController {
         'status': selectedStatus.value,
         'keterangan': keteranganController.text,
         'imageUrl': imageUrl,
+        'location': locationController.text, // Keep existing location code
+        'time': selectedTime.value, // Use the current time
         'createdAt': FieldValue.serverTimestamp(),
       });
 
@@ -192,6 +308,8 @@ class AddPresensiController extends GetxController {
   void onClose() {
     namaController.dispose();
     keteranganController.dispose();
+    timeController.dispose();
+    locationController.dispose();
     super.onClose();
   }
 }
