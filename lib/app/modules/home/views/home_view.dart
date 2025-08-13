@@ -13,7 +13,7 @@ class HomeView extends GetView<HomeController> {
       key: controller.scaffoldKey,
 
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        title: Obx(() => Text(_getAppBarTitle(controller.selectedIndex.value))),
         centerTitle: true,
       ),
       // The drawer is the slide-out menu
@@ -41,6 +41,24 @@ class HomeView extends GetView<HomeController> {
         ),
       ),
     );
+  }
+
+  // Helper method to get the AppBar title based on selected index
+  String _getAppBarTitle(int index) {
+    switch (index) {
+      case 0:
+        return 'Lembur';
+      case 1:
+        return 'Presensi';
+      case 2:
+        return 'Bukti Kegiatan';
+      case 3:
+        return 'Kegiatan Olahraga';
+      case 4:
+        return 'Lapor Prestasi';
+      default:
+        return 'Dashboard';
+    }
   }
 
   // Widget for building the navigation drawer
