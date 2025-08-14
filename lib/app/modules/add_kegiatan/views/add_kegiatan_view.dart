@@ -32,15 +32,61 @@ class AddKegiatanView extends GetView<AddKegiatanController> {
                     const SizedBox(height: 16),
                     
                     // Activity Name field
-                    TextField(
-                      controller: controller.activityNameController,
-                      decoration: const InputDecoration(
-                        labelText: 'Nama Kegiatan',
-                        border: OutlineInputBorder(),
-                        hintText: 'Masukkan nama kegiatan',
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Nama Kegiatan",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Obx(() => Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.grey),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              underline: SizedBox(),
+                              value: controller.selectedActivity.value.isEmpty 
+                                  ? null 
+                                  : controller.selectedActivity.value,
+                              hint: Text("Pilih Kegiatan"),
+                              items: controller.activityList.map((String activity) {
+                                return DropdownMenuItem<String>(
+                                  value: activity,
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(vertical: 10.0),
+                                    width: double.infinity,
+                                    child: Text(
+                                      activity,
+                                      overflow: TextOverflow.visible, // Changed to visible
+                                      maxLines: 2,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
+                              // Increased item height to accommodate 2 lines of text
+                              itemHeight: 70,
+                              onChanged: (String? newValue) {
+                                if (newValue != null) {
+                                  controller.setSelectedActivity(newValue);
+                                }
+                              },
+                            ),
+                          )),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 16),
                     
                     // Date field
                     GestureDetector(

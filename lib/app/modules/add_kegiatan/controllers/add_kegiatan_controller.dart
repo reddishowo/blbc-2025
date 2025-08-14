@@ -20,8 +20,20 @@ class AddKegiatanController extends GetxController {
 
   // Text controllers
   final nameController = TextEditingController();
-  final activityNameController = TextEditingController();
   final dateController = TextEditingController();
+
+  // Activity list and selection
+  final List<String> activityList = [
+    'Survei Evaluasi Budaya Organisasi',
+    '[ Reskilling ] E-Learning Peningkatan Kompetensi Pemecahan Masalah dan Pengambilan Keputusan',
+    '[ Reskilling II ] E-Learning Penguatan Kemampuan Analisis Pegawai dalam Menghadapi Ekosistem Kerja Baru',
+    'Pelaksanaan Survei Penguatan Budaya Kementerian Keuangan',
+    'Seminar PUG Kemenkeu 2023',
+    'E-Learning Mandatori Penegakan Disiplin',
+    'Kuesioner Piloting Presensi Melalui Aplikasi Satu Kemenkeu',
+    'Pengisian Survei Forum PINTAR',
+  ];
+  final RxString selectedActivity = ''.obs;
 
   // Reactive variables
   final Rxn<File> pickedFile = Rxn<File>();
@@ -36,6 +48,11 @@ class AddKegiatanController extends GetxController {
     final user = AuthController.instance.firebaseUser.value;
     nameController.text = user?.displayName ?? 'User Name Not Found';
     
+    // Set default selected activity if list is not empty
+    if (activityList.isNotEmpty) {
+      selectedActivity.value = activityList[0];
+    }
+    
     // Set default date
     _updateDateDisplay();
   }
@@ -45,13 +62,18 @@ class AddKegiatanController extends GetxController {
     dateController.text = DateFormat('EEEE, dd MMMM yyyy', 'id_ID').format(selectedDate.value);
   }
 
+  // Set selected activity
+  void setSelectedActivity(String activity) {
+    selectedActivity.value = activity;
+  }
+
   // Pick date
   Future<void> pickDate(BuildContext context) async {
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: selectedDate.value,
       firstDate: DateTime(2023),
-      lastDate: DateTime(2050), // Changed from 2025 to 2030
+      lastDate: DateTime(2030), // Changed from 2025 to 2030
     );
     
     if (pickedDate != null && pickedDate != selectedDate.value) {
@@ -88,8 +110,8 @@ class AddKegiatanController extends GetxController {
       return;
     }
 
-    if (activityNameController.text.isEmpty) {
-      Get.snackbar('Error', 'Nama kegiatan tidak boleh kosong');
+    if (selectedActivity.value.isEmpty) {
+      Get.snackbar('Error', 'Harap pilih kegiatan');
       return;
     }
 
@@ -128,7 +150,7 @@ class AddKegiatanController extends GetxController {
       await _firestore.collection('kegiatan').add({
         'userId': userId,
         'userName': nameController.text,
-        'activityName': activityNameController.text,
+        'activityName': selectedActivity.value,
         'date': dateTimestamp,
         'documentUrl': documentUrl,
         'documentName': pickedFileName.value,
@@ -211,7 +233,6 @@ class AddKegiatanController extends GetxController {
   @override
   void onClose() {
     nameController.dispose();
-    activityNameController.dispose();
     dateController.dispose();
     super.onClose();
   }
