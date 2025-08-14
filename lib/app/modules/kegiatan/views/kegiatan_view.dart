@@ -116,10 +116,17 @@ class KegiatanView extends GetView<KegiatanController> {
                       ),
                     ),
                     title: Text(
-                      kegiatan.activityName,
+                      kegiatan.userName,
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
-                    subtitle: Text(kegiatan.userName + '\nDokumen: ${kegiatan.documentName}'),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(kegiatan.activityName),
+                        const SizedBox(height: 10), // Adding spacing here
+                        Text('Dokumen: ${kegiatan.documentName}'),
+                      ],
+                    ),
                     isThreeLine: true,
                     trailing: IconButton(
                       icon: const Icon(Icons.download_rounded, color: Colors.blue),

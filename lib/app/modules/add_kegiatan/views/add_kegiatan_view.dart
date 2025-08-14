@@ -131,11 +131,17 @@ class AddKegiatanView extends GetView<AddKegiatanController> {
                                       color: Colors.blue,
                                     ),
                                     const SizedBox(height: 8),
-                                    Text(
-                                      controller.pickedFileName.value,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                      child: Text(
+                                        controller.pickedFileName.value,
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
                                     ),
                                     const SizedBox(height: 4),
