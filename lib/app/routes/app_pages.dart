@@ -1,5 +1,7 @@
 import 'package:get/get.dart';
 
+import '../modules/add_kegiatan/bindings/add_kegiatan_binding.dart';
+import '../modules/add_kegiatan/views/add_kegiatan_view.dart';
 import '../modules/add_lembur/bindings/add_lembur_binding.dart';
 import '../modules/add_lembur/views/add_lembur_view.dart';
 import '../modules/add_olahraga/bindings/add_olahraga_binding.dart';
@@ -9,6 +11,8 @@ import '../modules/add_presensi/views/add_presensi_view.dart';
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
+import '../modules/kegiatan/bindings/kegiatan_binding.dart';
+import '../modules/kegiatan/views/kegiatan_view.dart';
 import '../modules/lembur/bindings/lembur_binding.dart';
 import '../modules/lembur/views/lembur_view.dart';
 import '../modules/login/bindings/login_binding.dart';
@@ -78,6 +82,16 @@ class AppPages {
       name: _Paths.ADD_OLAHRAGA,
       page: () => const AddOlahragaView(),
       binding: AddOlahragaBinding(),
+    ),
+    GetPage(
+      name: _Paths.KEGIATAN,
+      page: () => const KegiatanView(),
+      binding: KegiatanBinding(),
+    ),
+    GetPage(
+      name: _Paths.ADD_KEGIATAN,
+      page: () => const AddKegiatanView(),
+      binding: AddKegiatanBinding(),
     ),
   ];
 }

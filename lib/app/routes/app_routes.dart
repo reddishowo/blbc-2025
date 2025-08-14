@@ -12,6 +12,8 @@ abstract class Routes {
   static const ADD_PRESENSI = _Paths.ADD_PRESENSI;
   static const OLAHRAGA = _Paths.OLAHRAGA;
   static const ADD_OLAHRAGA = _Paths.ADD_OLAHRAGA;
+  static const KEGIATAN = _Paths.KEGIATAN;
+  static const ADD_KEGIATAN = _Paths.ADD_KEGIATAN;
 }
 
 abstract class _Paths {
@@ -26,4 +28,6 @@ abstract class _Paths {
   static const ADD_PRESENSI = '/add-presensi';
   static const OLAHRAGA = '/olahraga';
   static const ADD_OLAHRAGA = '/add-olahraga';
+  static const KEGIATAN = '/kegiatan';
+  static const ADD_KEGIATAN = '/add-kegiatan';
 }

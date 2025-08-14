@@ -3,6 +3,7 @@ import '../controllers/home_controller.dart';
 import '../../lembur/controllers/lembur_controller.dart';
 import '../../presensi/controllers/presensi_controller.dart';
 import '../../olahraga/controllers/olahraga_controller.dart';
+import '../../kegiatan/controllers/kegiatan_controller.dart';
 
 class HomeBinding extends Bindings {
   @override
@@ -12,6 +13,7 @@ class HomeBinding extends Bindings {
     // Add controllers for all views used in the bottom navigation bar
     Get.lazyPut<LemburController>(() => LemburController());
     Get.lazyPut<PresensiController>(() => PresensiController());
+    Get.lazyPut<KegiatanController>(() => KegiatanController());
     Get.lazyPut<OlahragaController>(() => OlahragaController());
   }
 }

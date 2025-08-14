@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sppdn/app/modules/lembur/views/lembur_view.dart';
 import 'package:sppdn/app/modules/presensi/views/presensi_view.dart';
 import 'package:sppdn/app/modules/olahraga/views/olahraga_view.dart';
+import 'package:sppdn/app/modules/kegiatan/views/kegiatan_view.dart';
 import '../../auth/controllers/auth_controller.dart';
 
 class HomeController extends GetxController {
@@ -16,8 +17,8 @@ class HomeController extends GetxController {
   static final List<Widget> widgetOptions = <Widget>[
     const LemburView(),
     const PresensiView(),
-    const Center(child: Text('Bukti Kegiatan Page')),
-    const OlahragaView(), // Directly use OlahragaView here
+    const KegiatanView(), // Update this to use the KegiatanView
+    const OlahragaView(),
     const Center(child: Text('Lapor Prestasi Page')),
   ];
 
