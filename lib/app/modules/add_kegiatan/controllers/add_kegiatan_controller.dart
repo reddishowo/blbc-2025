@@ -20,22 +20,8 @@ class AddKegiatanController extends GetxController {
 
   // Text controllers
   final nameController = TextEditingController();
+  final activityNameController = TextEditingController();
   final dateController = TextEditingController();
-
-  // Dropdown list for activities
-  final List<String> activityOptions = [
-    'Survei Evaluasi Budaya Organisasi',
-    '[ Reskilling ] E-Learning Peningkatan Kompetensi Pemecahan Masalah dan Pengambilan Keputusan',
-    '[ Reskilling II ] E-Learning Penguatan Kemampuan Analisis Pegawai dalam Menghadapi Ekosistem Kerja Baru',
-    'Pelaksanaan Survei Penguatan Budaya Kementerian Keuangan',
-    'Seminar PUG Kemenkeu 2023',
-    'E-Learning Mandatori Penegakan Disiplin',
-    'Kuesioner Piloting Presensi Melalui Aplikasi Satu Kemenkeu',
-    'Pengisian Survei Forum PINTAR'
-  ];
-  
-  // Selected activity
-  final RxString selectedActivity = ''.obs;
 
   // Reactive variables
   final Rxn<File> pickedFile = Rxn<File>();
@@ -52,21 +38,11 @@ class AddKegiatanController extends GetxController {
     
     // Set default date
     _updateDateDisplay();
-    
-    // Set default selected activity (first option)
-    if (activityOptions.isNotEmpty) {
-      selectedActivity.value = activityOptions[0];
-    }
   }
 
   // Update the date display
   void _updateDateDisplay() {
     dateController.text = DateFormat('EEEE, dd MMMM yyyy', 'id_ID').format(selectedDate.value);
-  }
-
-  // Update selected activity
-  void setSelectedActivity(String activity) {
-    selectedActivity.value = activity;
   }
 
   // Pick date
@@ -87,43 +63,15 @@ class AddKegiatanController extends GetxController {
   // Pick document file
   Future<void> pickDocument() async {
     try {
-      // For demo purposes, show a dialog instead of using file_picker
-      Get.dialog(
-        AlertDialog(
-          title: const Text("Pilih Jenis Dokumen"),
-          content: const Text("Silakan pilih jenis dokumen yang ingin Anda unggah."),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Get.back();
-                // Simulate document selection (for testing)
-                pickedFileName.value = "bukti_kegiatan.pdf";
-                // Just for demo purposes
-                Get.snackbar(
-                  "Info", 
-                  "Dokumen PDF telah dipilih (simulasi)",
-                  duration: const Duration(seconds: 2),
-                );
-              },
-              child: const Text("PDF"),
-            ),
-            TextButton(
-              onPressed: () {
-                Get.back();
-                // Simulate document selection (for testing)
-                pickedFileName.value = "bukti_kegiatan.docx";
-                // Just for demo purposes
-                Get.snackbar(
-                  "Info", 
-                  "Dokumen Word telah dipilih (simulasi)",
-                  duration: const Duration(seconds: 2),
-                );
-              },
-              child: const Text("Word"),
-            ),
-          ],
-        ),
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf', 'doc', 'docx'],
       );
+
+      if (result != null) {
+        pickedFile.value = File(result.files.single.path!);
+        pickedFileName.value = result.files.single.name;
+      }
     } catch (e) {
       Get.snackbar(
         "Error",
@@ -140,12 +88,12 @@ class AddKegiatanController extends GetxController {
       return;
     }
 
-    if (selectedActivity.value.isEmpty) {
-      Get.snackbar('Error', 'Pilih jenis kegiatan terlebih dahulu');
+    if (activityNameController.text.isEmpty) {
+      Get.snackbar('Error', 'Nama kegiatan tidak boleh kosong');
       return;
     }
 
-    if (pickedFileName.value.isEmpty) {
+    if (pickedFile.value == null) {
       Get.snackbar('Error', 'Harap sertakan bukti kegiatan (dokumen)');
       return;
     }
@@ -159,8 +107,13 @@ class AddKegiatanController extends GetxController {
         return;
       }
 
-      // For demo purposes, use a placeholder URL
-      String documentUrl = "https://example.com/documents/" + pickedFileName.value;
+      // Upload document
+      String? documentUrl = await _uploadDocument(pickedFile.value!, pickedFileName.value);
+      if (documentUrl == null) {
+        // If upload fails, stop the process
+        isLoading.value = false;
+        return;
+      }
 
       // Create timestamp for selected date at midnight
       final dateTimestamp = Timestamp.fromDate(
@@ -175,7 +128,7 @@ class AddKegiatanController extends GetxController {
       await _firestore.collection('kegiatan').add({
         'userId': userId,
         'userName': nameController.text,
-        'activityName': selectedActivity.value,
+        'activityName': activityNameController.text,
         'date': dateTimestamp,
         'documentUrl': documentUrl,
         'documentName': pickedFileName.value,
@@ -214,9 +167,51 @@ class AddKegiatanController extends GetxController {
     }
   }
 
+  /// Uploads the selected document to ImageKit.io using a Multipart request.
+  Future<String?> _uploadDocument(File file, String fileName) async {
+    // Use Basic Authentication with the private key as the username and an empty password
+    String basicAuth = 'Basic ${base64Encode(utf8.encode('$_imageKitPrivateKey:'))}';
+
+    // Create the multipart request
+    var request = http.MultipartRequest('POST', Uri.parse(_imageKitUrlEndpoint));
+
+    // Add the authentication header
+    request.headers['Authorization'] = basicAuth;
+
+    // Add the file to the request
+    request.files.add(
+      await http.MultipartFile.fromPath(
+        'file', // Field name expected by the ImageKit API
+        file.path,
+        filename: fileName,
+      ),
+    );
+
+    // Add other required fields
+    request.fields['fileName'] = fileName;
+
+    try {
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return data['url']; // Return the hosted document URL
+      } else {
+        // Show a detailed error message from the server
+        Get.snackbar('Error Upload', 'Gagal mengunggah dokumen: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      Get.snackbar('Error Jaringan', 'Gagal terhubung ke server upload: $e');
+      return null;
+    }
+  }
+
   @override
   void onClose() {
     nameController.dispose();
+    activityNameController.dispose();
     dateController.dispose();
     super.onClose();
   }
