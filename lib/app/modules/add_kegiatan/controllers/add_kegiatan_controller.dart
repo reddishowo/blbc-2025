@@ -51,7 +51,7 @@ class AddKegiatanController extends GetxController {
       context: context,
       initialDate: selectedDate.value,
       firstDate: DateTime(2023),
-      lastDate: DateTime(2025),
+      lastDate: DateTime(2050), // Changed from 2025 to 2030
     );
     
     if (pickedDate != null && pickedDate != selectedDate.value) {
