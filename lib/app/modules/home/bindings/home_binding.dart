@@ -4,6 +4,7 @@ import '../../lembur/controllers/lembur_controller.dart';
 import '../../presensi/controllers/presensi_controller.dart';
 import '../../olahraga/controllers/olahraga_controller.dart';
 import '../../kegiatan/controllers/kegiatan_controller.dart';
+import '../../prestasi/controllers/prestasi_controller.dart';
 
 class HomeBinding extends Bindings {
   @override
@@ -15,5 +16,6 @@ class HomeBinding extends Bindings {
     Get.lazyPut<PresensiController>(() => PresensiController());
     Get.lazyPut<KegiatanController>(() => KegiatanController());
     Get.lazyPut<OlahragaController>(() => OlahragaController());
+    Get.lazyPut<PrestasiController>(() => PrestasiController());
   }
 }

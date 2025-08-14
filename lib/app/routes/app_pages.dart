@@ -8,6 +8,8 @@ import '../modules/add_olahraga/bindings/add_olahraga_binding.dart';
 import '../modules/add_olahraga/views/add_olahraga_view.dart';
 import '../modules/add_presensi/bindings/add_presensi_binding.dart';
 import '../modules/add_presensi/views/add_presensi_view.dart';
+import '../modules/add_prestasi/bindings/add_prestasi_binding.dart';
+import '../modules/add_prestasi/views/add_prestasi_view.dart';
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
@@ -21,6 +23,8 @@ import '../modules/olahraga/bindings/olahraga_binding.dart';
 import '../modules/olahraga/views/olahraga_view.dart';
 import '../modules/presensi/bindings/presensi_binding.dart';
 import '../modules/presensi/views/presensi_view.dart';
+import '../modules/prestasi/bindings/prestasi_binding.dart';
+import '../modules/prestasi/views/prestasi_view.dart';
 import '../modules/register/bindings/register_binding.dart';
 import '../modules/register/views/register_view.dart';
 
@@ -92,6 +96,16 @@ class AppPages {
       name: _Paths.ADD_KEGIATAN,
       page: () => const AddKegiatanView(),
       binding: AddKegiatanBinding(),
+    ),
+    GetPage(
+      name: _Paths.PRESTASI,
+      page: () => const PrestasiView(),
+      binding: PrestasiBinding(),
+    ),
+    GetPage(
+      name: _Paths.ADD_PRESTASI,
+      page: () => const AddPrestasiView(),
+      binding: AddPrestasiBinding(),
     ),
   ];
 }
