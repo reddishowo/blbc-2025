@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart'; // Add this import
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sppdn/app/routes/app_pages.dart'; 
@@ -152,7 +153,6 @@ class AuthController extends GetxController {
   Future<void> signInWithGoogle() async {
     try {
       isLoading.value = true;
-      // ignore: body_might_complete_normally_catch_error
       await _googleSignIn.signOut().catchError((_) {});
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) { 
@@ -169,6 +169,10 @@ class AuthController extends GetxController {
       if (user != null) {
         await _saveUserProfile(user);
       }
+    } on PlatformException catch (e) {
+      // Show detailed platform error to help debug ApiException: 10
+      Get.snackbar('Error', 'Login Google gagal: ${e.code} - ${e.message}\nDetails: ${e.details}', snackPosition: SnackPosition.BOTTOM);
+      print('PlatformException details: Code=${e.code}, Message=${e.message}, Details=${e.details}');
     } on FirebaseAuthException catch (e) {
       Get.snackbar('Error', _getFirebaseErrorMessage(e), snackPosition: SnackPosition.BOTTOM);
     } catch (e) {

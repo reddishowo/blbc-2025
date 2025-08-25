@@ -172,6 +172,7 @@ class AddKegiatanController extends GetxController {
       
       // Refresh the kegiatan list
       if (Get.isRegistered<KegiatanController>()) {
+        // ignore: unused_local_variable
         final KegiatanController kegiatanController = Get.find<KegiatanController>();
         // The list will automatically update through the stream
       }
