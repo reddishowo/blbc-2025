@@ -19,7 +19,7 @@ void main() async {
 
   runApp(
     GetMaterialApp(
-      title: "e-blbc",
+      title: "E-BLBC",
       initialRoute: AppPages.INITIAL,
       getPages: AppPages.routes,
       theme: ThemeData(

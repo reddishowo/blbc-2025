@@ -60,7 +60,7 @@ flutter:
     - assets/logo.png
 
 flutter_launcher_icons:
-  android: true # Kita ingin membuat ikon untuk Android
-  ios: true # Anda juga bisa sekalian membuatnya untuk iOS
-  image_path: "assets/logo.png" # Path ke file logo Anda
-  min_sdk_android: 21 # Sesuaikan dengan minSdk di build.gradle Anda jika perlu
+  android: true  # This will use ic_launcher as the name
+  ios: true
+  image_path: "assets/eBLBC.png"
+  min_sdk_android: 21
