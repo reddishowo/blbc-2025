@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:sppdn/app/routes/app_pages.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 import '../controllers/kegiatan_controller.dart';
 
@@ -100,21 +101,7 @@ class KegiatanView extends GetView<KegiatanController> {
                   child: ListTile(
                     contentPadding:
                         const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                    leading: Container(
-                      width: 60,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        color: Colors.blue.shade100,
-                        borderRadius: BorderRadius.circular(8.0),
-                      ),
-                      child: Center(
-                        child: Icon(
-                          _getFileIcon(kegiatan.documentName),
-                          color: Colors.blue,
-                          size: 30,
-                        ),
-                      ),
-                    ),
+                    leading: _buildLeadingWidget(kegiatan),
                     title: Text(
                       kegiatan.userName,
                       style: const TextStyle(fontWeight: FontWeight.bold),
@@ -142,10 +129,68 @@ class KegiatanView extends GetView<KegiatanController> {
     );
   }
 
+  // Helper method to build leading widget (image preview or icon)
+  Widget _buildLeadingWidget(dynamic kegiatan) {
+    final String fileName = kegiatan.documentName.toLowerCase();
+    
+    // Check if the file is an image
+    if (fileName.endsWith('.png') || 
+        fileName.endsWith('.jpg') || 
+        fileName.endsWith('.jpeg') ||
+        fileName.endsWith('.gif')) {
+      // Return image preview
+      return Container(
+        width: 60,
+        height: 60,
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: CachedNetworkImage(
+          imageUrl: kegiatan.documentUrl,
+          fit: BoxFit.cover,
+          placeholder: (context, url) => Center(
+            child: SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+          errorWidget: (context, url, error) => Container(
+            color: Colors.grey.shade200,
+            child: Icon(Icons.image_not_supported, color: Colors.grey),
+          ),
+        ),
+      );
+    } else {
+      // Return file icon for non-image files
+      return Container(
+        width: 60,
+        height: 60,
+        decoration: BoxDecoration(
+          color: Colors.blue.shade100,
+          borderRadius: BorderRadius.circular(8.0),
+        ),
+        child: Center(
+          child: Icon(
+            _getFileIcon(kegiatan.documentName),
+            color: Colors.blue,
+            size: 30,
+          ),
+        ),
+      );
+    }
+  }
+
   // Method to show detailed kegiatan information in a dialog
   void _showKegiatanDetail(dynamic kegiatan) {
     final DateTime kegiatanDate = kegiatan.date.toDate();
     final formattedDate = DateFormat('EEEE, d MMMM yyyy', 'id_ID').format(kegiatanDate);
+    final String fileName = kegiatan.documentName.toLowerCase();
+    final bool isImage = fileName.endsWith('.png') || 
+                          fileName.endsWith('.jpg') || 
+                          fileName.endsWith('.jpeg') ||
+                          fileName.endsWith('.gif');
 
     Get.dialog(
       Dialog(
@@ -154,85 +199,108 @@ class KegiatanView extends GetView<KegiatanController> {
         ),
         child: Container(
           padding: const EdgeInsets.all(20),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header with activity name and close button
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: Text(
-                      kegiatan.activityName,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header with activity name and close button
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        kegiatan.activityName,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                    // Close button
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Get.back(),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
+
+                const Divider(height: 24),
+
+                // Show image preview if it's an image file
+                if (isImage) ...[
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      imageUrl: kegiatan.documentUrl,
+                      placeholder: (context, url) => const Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        height: 200,
+                        color: Colors.grey.shade200,
+                        child: const Center(
+                          child: Icon(Icons.error, color: Colors.red),
+                        ),
                       ),
                     ),
                   ),
-                  // Close button
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Get.back(),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
+                  const SizedBox(height: 16),
                 ],
-              ),
 
-              const Divider(height: 24),
+                // User name
+                _buildDetailItem(
+                  'Nama',
+                  kegiatan.userName,
+                  Icons.person,
+                ),
 
-              // User name
-              _buildDetailItem(
-                'Nama',
-                kegiatan.userName,
-                Icons.person,
-              ),
+                // Date
+                _buildDetailItem(
+                  'Tanggal',
+                  formattedDate,
+                  Icons.calendar_today,
+                ),
 
-              // Date
-              _buildDetailItem(
-                'Tanggal',
-                formattedDate,
-                Icons.calendar_today,
-              ),
+                // Document
+                _buildDetailItem(
+                  'Dokumen',
+                  kegiatan.documentName,
+                  Icons.description,
+                ),
 
-              // Document
-              _buildDetailItem(
-                'Dokumen',
-                kegiatan.documentName,
-                Icons.description,
-              ),
+                const SizedBox(height: 24),
 
-              const SizedBox(height: 24),
-
-              // Download button
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () => _openDocument(kegiatan.documentUrl),
-                  icon: const Icon(Icons.download_rounded),
-                  label: const Text('Lihat Dokumen'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                // Download button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: () => _openDocument(kegiatan.documentUrl),
+                    icon: const Icon(Icons.download_rounded),
+                    label: const Text('Lihat Dokumen'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // Close button
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () => Get.back(),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                // Close button
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () => Get.back(),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    ),
+                    child: const Text('Tutup'),
                   ),
-                  child: const Text('Tutup'),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -276,11 +344,17 @@ class KegiatanView extends GetView<KegiatanController> {
 
   // Helper to get appropriate icon based on file extension
   IconData _getFileIcon(String fileName) {
-    if (fileName.toLowerCase().endsWith('.pdf')) {
+    final String lowerFileName = fileName.toLowerCase();
+    
+    if (lowerFileName.endsWith('.pdf')) {
       return Icons.picture_as_pdf;
-    } else if (fileName.toLowerCase().endsWith('.doc') || 
-               fileName.toLowerCase().endsWith('.docx')) {
+    } else if (lowerFileName.endsWith('.doc') || lowerFileName.endsWith('.docx')) {
       return Icons.article;
+    } else if (lowerFileName.endsWith('.png') || 
+              lowerFileName.endsWith('.jpg') || 
+              lowerFileName.endsWith('.jpeg') ||
+              lowerFileName.endsWith('.gif')) {
+      return Icons.image;
     } else {
       return Icons.insert_drive_file;
     }
