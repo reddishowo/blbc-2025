@@ -26,6 +26,22 @@ class AddPrestasiView extends GetView<AddPrestasiController> {
               ),
               const SizedBox(height: 16),
               _buildDropdown(),
+              
+              // Custom Jabatan field (conditionally visible)
+              Obx(() => controller.showCustomJabatan.value 
+                ? Column(
+                    children: [
+                      const SizedBox(height: 16),
+                      _buildTextField(
+                        controller: controller.customJabatanController,
+                        label: 'Jabatan Lainnya',
+                        hint: 'Masukkan jabatan pemberi penghargaan',
+                      ),
+                    ],
+                  ) 
+                : const SizedBox.shrink()
+              ),
+              
               const SizedBox(height: 16),
               _buildTextField(
                 controller: controller.namaPemberiController,
@@ -35,8 +51,8 @@ class AddPrestasiView extends GetView<AddPrestasiController> {
               const SizedBox(height: 16),
               _buildTextField(
                 controller: controller.nomorSertifikatController,
-                label: 'Nomor Sertifikat',
-                hint: 'Masukkan nomor sertifikat',
+                label: 'Nomor Sertifikat (Opsional)',
+                hint: 'Masukkan nomor sertifikat jika ada',
               ),
               const SizedBox(height: 16),
               _buildFilePicker(),
@@ -113,11 +129,7 @@ class AddPrestasiView extends GetView<AddPrestasiController> {
               child: Text(value),
             );
           }).toList(),
-          onChanged: (String? newValue) {
-            if (newValue != null) {
-              controller.selectedJabatan.value = newValue;
-            }
-          },
+          onChanged: controller.onJabatanChanged,
         )),
       ],
     );

@@ -21,11 +21,13 @@ class AddPrestasiController extends GetxController {
   final TextEditingController namaPrestasiController = TextEditingController();
   final TextEditingController namaPemberiController = TextEditingController();
   final TextEditingController nomorSertifikatController = TextEditingController();
+  final TextEditingController customJabatanController = TextEditingController();
   
   final RxString selectedJabatan = 'MENTERI'.obs;
   final RxString selectedFileName = ''.obs;
   final Rx<File?> selectedFile = Rx<File?>(null);
   final RxBool isLoading = false.obs;
+  final RxBool showCustomJabatan = false.obs;
 
   final List<String> jabatanOptions = [
     'MENTERI',
@@ -50,7 +52,15 @@ class AddPrestasiController extends GetxController {
     namaPrestasiController.dispose();
     namaPemberiController.dispose();
     nomorSertifikatController.dispose();
+    customJabatanController.dispose();
     super.onClose();
+  }
+
+  void onJabatanChanged(String? value) {
+    if (value != null) {
+      selectedJabatan.value = value;
+      showCustomJabatan.value = (value == 'Lainnya');
+    }
   }
 
   Future<void> pickFile() async {
@@ -93,12 +103,18 @@ class AddPrestasiController extends GetxController {
         return;
       }
 
+      // Determine the jabatan value to save
+      String jabatanToSave = selectedJabatan.value;
+      if (selectedJabatan.value == 'Lainnya' && customJabatanController.text.isNotEmpty) {
+        jabatanToSave = customJabatanController.text;
+      }
+
       // Create a new document in the prestasi collection
       await _firestore.collection('prestasi').add({
         'userId': userId,
         'nama': nameController.text,
         'namaPrestasi': namaPrestasiController.text,
-        'jabatanPemberi': selectedJabatan.value,
+        'jabatanPemberi': jabatanToSave,
         'namaPemberi': namaPemberiController.text,
         'nomorSertifikat': nomorSertifikatController.text,
         'buktiUrl': fileUrl,
@@ -151,10 +167,11 @@ class AddPrestasiController extends GetxController {
       Get.snackbar('Error', 'Nama pemberi penghargaan harus diisi');
       return false;
     }
-    if (nomorSertifikatController.text.isEmpty) {
-      Get.snackbar('Error', 'Nomor sertifikat harus diisi');
+    if (selectedJabatan.value == 'Lainnya' && customJabatanController.text.isEmpty) {
+      Get.snackbar('Error', 'Jabatan pemberi penghargaan harus diisi');
       return false;
     }
+    // Remove validation for nomorSertifikat since it's now optional
     if (selectedFile.value == null) {
       Get.snackbar('Error', 'Bukti harus dipilih');
       return false;
