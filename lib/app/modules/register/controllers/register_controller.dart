@@ -60,7 +60,30 @@ class RegisterController extends GetxController {
   }
   
   void registerWithGoogle() {
-    AuthController.instance.signInWithGoogle();
+    print("--- Google sign-in button pressed in Register page ---");
+    try {
+      AuthController.instance.signInWithGoogle().then((_) {
+        print("--- Google sign-in completed successfully ---");
+      }).catchError((error) {
+        print("--- Google sign-in error: $error ---");
+        Get.snackbar(
+          "Google Sign-In Error",
+          error.toString(),
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      });
+    } catch (e) {
+      print("--- Exception during Google sign-in: $e ---");
+      Get.snackbar(
+        "Error",
+        "Failed to sign in with Google: $e",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
   }
   
   void goToLogin() {
