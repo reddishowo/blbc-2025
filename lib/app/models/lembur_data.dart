@@ -8,6 +8,7 @@ class LemburModel {
   final String endTime;
   final String photoUrl;
   final String userName;
+  final String? description; // Add this line
 
   LemburModel({
     required this.id,
@@ -17,6 +18,7 @@ class LemburModel {
     required this.endTime,
     required this.photoUrl,
     required this.userName,
+    this.description,
   });
 
   // Factory constructor to create an instance from a Firestore document
@@ -31,6 +33,7 @@ class LemburModel {
       endTime: data['endTime'] ?? 'N/A',
       photoUrl: data['photoUrl'] ?? '',
       userName: data['userName'] ?? 'N/A',
+      description: data['description'], // Map Firestore field to model
     );
   }
 }
