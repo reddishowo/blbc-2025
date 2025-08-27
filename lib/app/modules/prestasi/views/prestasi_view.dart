@@ -74,7 +74,8 @@ class PrestasiView extends GetView<PrestasiController> {
             ),
           ),
           title: Text(
-            prestasi.nama,
+            // Use recipientName instead of nama
+            prestasi.recipientName ?? prestasi.nama,
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -142,10 +143,10 @@ class PrestasiView extends GetView<PrestasiController> {
 
               const Divider(height: 24),
 
-              // User name
+              // Recipient Name (instead of account holder name)
               _buildDetailItem(
-                'Nama',
-                prestasi.nama,
+                'Nama Penerima',
+                prestasi.recipientName ?? prestasi.nama,
                 Icons.person,
               ),
 

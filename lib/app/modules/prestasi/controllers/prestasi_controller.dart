@@ -16,21 +16,13 @@ class PrestasiController extends GetxController {
   Future<void> fetchPrestasi() async {
     try {
       isLoading.value = true;
-      final user = FirebaseAuth.instance.currentUser;
       
-      if (user == null) {
-        Get.snackbar('Error', 'User not logged in');
-        return;
-      }
-
+      // Remove user filter to show all prestasi
       final querySnapshot = await FirebaseFirestore.instance
           .collection('prestasi')
-          .where('userId', isEqualTo: user.uid)
-          // Remove the orderBy to avoid index requirement
-          // .orderBy('createdAt', descending: true)
           .get();
 
-      // Sort the results in memory instead
+      // Sort the results in memory
       final docs = querySnapshot.docs.toList();
       docs.sort((a, b) {
         final aTime = a.data()['createdAt']?.toDate() ?? DateTime.now();

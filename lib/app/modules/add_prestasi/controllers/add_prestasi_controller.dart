@@ -18,6 +18,7 @@ class AddPrestasiController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   final TextEditingController nameController = TextEditingController();
+  final TextEditingController recipientNameController = TextEditingController(); // New controller for recipient name
   final TextEditingController namaPrestasiController = TextEditingController();
   final TextEditingController namaPemberiController = TextEditingController();
   final TextEditingController nomorSertifikatController = TextEditingController();
@@ -44,11 +45,14 @@ class AddPrestasiController extends GetxController {
     // Pre-fill user data when the controller is initialized
     final user = AuthController.instance.firebaseUser.value;
     nameController.text = user?.displayName ?? 'User Name Not Found';
+    // Also prefill the recipient name with the user's name, but this can be changed
+    recipientNameController.text = user?.displayName ?? 'User Name Not Found';
   }
 
   @override
   void onClose() {
     nameController.dispose();
+    recipientNameController.dispose(); // Dispose the new controller
     namaPrestasiController.dispose();
     namaPemberiController.dispose();
     nomorSertifikatController.dispose();
@@ -112,7 +116,8 @@ class AddPrestasiController extends GetxController {
       // Create a new document in the prestasi collection
       await _firestore.collection('prestasi').add({
         'userId': userId,
-        'nama': nameController.text,
+        'nama': nameController.text, // Account holder name
+        'recipientName': recipientNameController.text, // Name of the person who received the achievement
         'namaPrestasi': namaPrestasiController.text,
         'jabatanPemberi': jabatanToSave,
         'namaPemberi': namaPemberiController.text,
@@ -157,6 +162,10 @@ class AddPrestasiController extends GetxController {
   bool _validateForm() {
     if (nameController.text.isEmpty) {
       Get.snackbar('Error', 'Nama tidak boleh kosong');
+      return false;
+    }
+    if (recipientNameController.text.isEmpty) {
+      Get.snackbar('Error', 'Nama penerima prestasi tidak boleh kosong');
       return false;
     }
     if (namaPrestasiController.text.isEmpty) {

@@ -19,6 +19,13 @@ class AddPrestasiView extends GetView<AddPrestasiController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              // Add the new field for recipient name
+              _buildTextField(
+                controller: controller.recipientNameController,
+                label: 'Nama Penerima Prestasi',
+                hint: 'Masukkan nama penerima prestasi',
+              ),
+              const SizedBox(height: 16),
               _buildTextField(
                 controller: controller.namaPrestasiController,
                 label: 'Nama Prestasi',
