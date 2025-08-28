@@ -27,7 +27,7 @@ class AddLemburView extends GetView<AddLemburController> {
               ),
               const SizedBox(height: 16),
               Obx(() => DropdownButtonFormField<String>(
-                    value: controller.selectedActivity.value,
+                    value: controller.selectedActivity.value.isEmpty ? null : controller.selectedActivity.value,
                     decoration: const InputDecoration(
                       labelText: 'Jenis Kegiatan',
                       border: OutlineInputBorder(),

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart'; // <-- Import this
 
 import 'app/modules/auth/controllers/auth_controller.dart';
+import 'app/services/admin_config_service.dart';
 import 'app/routes/app_pages.dart';
 import 'firebase_options.dart';
 
@@ -16,6 +17,7 @@ void main() async {
   );  
 
   Get.put(AuthController(), permanent: true);
+  Get.put(AdminConfigService(), permanent: true);
 
   runApp(
     GetMaterialApp(

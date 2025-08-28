@@ -75,7 +75,7 @@ class AddPresensiView extends GetView<AddPresensiController> {
                         () => DropdownButton<String>(
                           isExpanded: true,
                           underline: Container(), // Remove the default underline
-                          value: controller.selectedKehadiran.value,
+                          value: controller.selectedKehadiran.value.isEmpty ? null : controller.selectedKehadiran.value,
                           items: controller.kehadiranOptions.map((String value) {
                             return DropdownMenuItem<String>(
                               value: value,

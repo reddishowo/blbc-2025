@@ -27,7 +27,7 @@ class AddPresensiController extends GetxController {
   final locationController = TextEditingController(); // New controller for location display
 
   // Reactive variables
-  final RxString selectedKehadiran = 'WFH'.obs;
+  final RxString selectedKehadiran = ''.obs;
   final RxString selectedStatus = 'SEHAT'.obs;
   final Rxn<XFile> pickedImage = Rxn<XFile>();
   final RxBool isLoading = false.obs;
@@ -35,7 +35,7 @@ class AddPresensiController extends GetxController {
   final RxString currentLocation = ''.obs; // Store the current location
 
   // Options for dropdowns
-  final List<String> kehadiranOptions = ['WFH', 'WFO', 'WFHB', 'CUTI', 'ST'];
+  final RxList<String> kehadiranOptions = <String>[].obs;
   final List<String> statusOptions = ['SEHAT', 'SAKIT', 'TIDAK YAKIN'];
 
   @override
@@ -51,6 +51,39 @@ class AddPresensiController extends GetxController {
     
     // Get current location
     _getCurrentLocation();
+    
+    // Load kehadiran options from Firestore
+    _loadKehadiranOptions();
+  }
+  
+  // Load kehadiran options from Firestore
+  Future<void> _loadKehadiranOptions() async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('admin_config')
+          .doc('presensi_kehadiran')
+          .get();
+      
+      if (doc.exists && doc.data() != null) {
+        final data = doc.data()!;
+        if (data['items'] != null) {
+          kehadiranOptions.value = List<String>.from(data['items']);
+          // Set default selected kehadiran if list is not empty
+          if (kehadiranOptions.isNotEmpty) {
+            selectedKehadiran.value = kehadiranOptions.first;
+          }
+        }
+      } else {
+        // Fallback to default values if document doesn't exist
+        kehadiranOptions.value = ['WFH', 'WFO', 'WFHB', 'CUTI', 'ST'];
+        selectedKehadiran.value = 'WFH';
+      }
+    } catch (e) {
+      // Fallback to default values on error
+      kehadiranOptions.value = ['WFH', 'WFO', 'WFHB', 'CUTI', 'ST'];
+      selectedKehadiran.value = 'WFH';
+      Get.snackbar('Error', 'Failed to load kehadiran options: $e');
+    }
   }
 
   // Request location permission

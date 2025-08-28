@@ -92,6 +92,20 @@ class HomeView extends GetView<HomeController> {
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
+                // Admin Panel - only show if user is admin
+                Obx(() {
+                  if (AuthController.instance.isAdmin) {
+                    return _buildDrawerItem(
+                      icon: Icons.admin_panel_settings,
+                      text: 'Admin Panel',
+                      onTap: () {
+                        Get.back(); // Close drawer
+                        Get.toNamed('/admin');
+                      },
+                    );
+                  }
+                  return const SizedBox.shrink();
+                }),
                 _buildDrawerItem(icon: Icons.info_outline_rounded, text: 'About', onTap: () {}),
               ],
             ),

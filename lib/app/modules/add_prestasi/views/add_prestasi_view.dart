@@ -120,7 +120,7 @@ class AddPrestasiView extends GetView<AddPrestasiController> {
         ),
         const SizedBox(height: 8),
         Obx(() => DropdownButtonFormField<String>(
-          value: controller.selectedJabatan.value,
+          value: controller.selectedJabatan.value.isEmpty ? null : controller.selectedJabatan.value,
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),

@@ -25,8 +25,8 @@ class AddLemburController extends GetxController {
   final otherActivityController = TextEditingController();
 
   // Dropdown options and state management
-  final List<String> activityOptions = ['Piket CPO / Lartas', 'Kegiatan Lain'];
-  final RxString selectedActivity = 'Piket CPO / Lartas'.obs;
+  final RxList<String> activityOptions = <String>[].obs;
+  final RxString selectedActivity = ''.obs;
 
   // UI state management
   final RxBool isLoading = false.obs;
@@ -40,6 +40,39 @@ class AddLemburController extends GetxController {
     final user = AuthController.instance.firebaseUser.value;
     nameController.text = user?.displayName ?? 'User Name Not Found';
     dateController.text = DateFormat('d MMMM yyyy').format(DateTime.now());
+    
+    // Load activity options from Firestore
+    _loadActivityOptions();
+  }
+  
+  // Load activity options from Firestore
+  Future<void> _loadActivityOptions() async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('admin_config')
+          .doc('lembur_activities')
+          .get();
+      
+      if (doc.exists && doc.data() != null) {
+        final data = doc.data()!;
+        if (data['items'] != null) {
+          activityOptions.value = List<String>.from(data['items']);
+          // Set default selected activity if list is not empty
+          if (activityOptions.isNotEmpty) {
+            selectedActivity.value = activityOptions.first;
+          }
+        }
+      } else {
+        // Fallback to default values if document doesn't exist
+        activityOptions.value = ['Piket CPO / Lartas', 'Kegiatan Lain'];
+        selectedActivity.value = 'Piket CPO / Lartas';
+      }
+    } catch (e) {
+      // Fallback to default values on error
+      activityOptions.value = ['Piket CPO / Lartas', 'Kegiatan Lain'];
+      selectedActivity.value = 'Piket CPO / Lartas';
+      Get.snackbar('Error', 'Failed to load activities: $e');
+    }
   }
 
   /// Shows a dialog for the user to choose between camera and gallery.

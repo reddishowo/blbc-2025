@@ -10,6 +10,8 @@ import '../modules/add_presensi/bindings/add_presensi_binding.dart';
 import '../modules/add_presensi/views/add_presensi_view.dart';
 import '../modules/add_prestasi/bindings/add_prestasi_binding.dart';
 import '../modules/add_prestasi/views/add_prestasi_view.dart';
+import '../modules/admin/bindings/admin_binding.dart';
+import '../modules/admin/views/admin_view.dart';
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
@@ -106,6 +108,11 @@ class AppPages {
       name: _Paths.ADD_PRESTASI,
       page: () => const AddPrestasiView(),
       binding: AddPrestasiBinding(),
+    ),
+    GetPage(
+      name: _Paths.ADMIN,
+      page: () => const AdminView(),
+      binding: AdminBinding(),
     ),
   ];
 }

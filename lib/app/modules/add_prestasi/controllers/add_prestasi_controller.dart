@@ -24,20 +24,13 @@ class AddPrestasiController extends GetxController {
   final TextEditingController nomorSertifikatController = TextEditingController();
   final TextEditingController customJabatanController = TextEditingController();
   
-  final RxString selectedJabatan = 'MENTERI'.obs;
+  final RxString selectedJabatan = ''.obs;
   final RxString selectedFileName = ''.obs;
   final Rx<File?> selectedFile = Rx<File?>(null);
   final RxBool isLoading = false.obs;
   final RxBool showCustomJabatan = false.obs;
 
-  final List<String> jabatanOptions = [
-    'MENTERI',
-    'ES I',
-    'ES II',
-    'ES III',
-    'ES IV',
-    'Lainnya'
-  ];
+  final RxList<String> jabatanOptions = <String>[].obs;
 
   @override
   void onInit() {
@@ -47,6 +40,39 @@ class AddPrestasiController extends GetxController {
     nameController.text = user?.displayName ?? 'User Name Not Found';
     // Also prefill the recipient name with the user's name, but this can be changed
     recipientNameController.text = user?.displayName ?? 'User Name Not Found';
+    
+    // Load jabatan options from Firestore
+    _loadJabatanOptions();
+  }
+  
+  // Load jabatan options from Firestore
+  Future<void> _loadJabatanOptions() async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('admin_config')
+          .doc('prestasi_jabatan')
+          .get();
+      
+      if (doc.exists && doc.data() != null) {
+        final data = doc.data()!;
+        if (data['items'] != null) {
+          jabatanOptions.value = List<String>.from(data['items']);
+          // Set default selected jabatan if list is not empty
+          if (jabatanOptions.isNotEmpty) {
+            selectedJabatan.value = jabatanOptions.first;
+          }
+        }
+      } else {
+        // Fallback to default values if document doesn't exist
+        jabatanOptions.value = ['MENTERI', 'ES I', 'ES II', 'ES III', 'ES IV', 'Lainnya'];
+        selectedJabatan.value = 'MENTERI';
+      }
+    } catch (e) {
+      // Fallback to default values on error
+      jabatanOptions.value = ['MENTERI', 'ES I', 'ES II', 'ES III', 'ES IV', 'Lainnya'];
+      selectedJabatan.value = 'MENTERI';
+      Get.snackbar('Error', 'Failed to load jabatan options: $e');
+    }
   }
 
   @override

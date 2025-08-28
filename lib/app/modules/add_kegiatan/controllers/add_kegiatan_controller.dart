@@ -23,16 +23,7 @@ class AddKegiatanController extends GetxController {
   final dateController = TextEditingController();
 
   // Activity list and selection
-  final List<String> activityList = [
-    'Survei Evaluasi Budaya Organisasi',
-    '[ Reskilling ] E-Learning Peningkatan Kompetensi Pemecahan Masalah dan Pengambilan Keputusan',
-    '[ Reskilling II ] E-Learning Penguatan Kemampuan Analisis Pegawai dalam Menghadapi Ekosistem Kerja Baru',
-    'Pelaksanaan Survei Penguatan Budaya Kementerian Keuangan',
-    'Seminar PUG Kemenkeu 2023',
-    'E-Learning Mandatori Penegakan Disiplin',
-    'Kuesioner Piloting Presensi Melalui Aplikasi Satu Kemenkeu',
-    'Pengisian Survei Forum PINTAR',
-  ];
+  final RxList<String> activityList = <String>[].obs;
   final RxString selectedActivity = ''.obs;
 
   // Reactive variables
@@ -48,13 +39,63 @@ class AddKegiatanController extends GetxController {
     final user = AuthController.instance.firebaseUser.value;
     nameController.text = user?.displayName ?? 'User Name Not Found';
     
-    // Set default selected activity if list is not empty
-    if (activityList.isNotEmpty) {
-      selectedActivity.value = activityList[0];
-    }
-    
     // Set default date
     _updateDateDisplay();
+    
+    // Load activity options from Firestore
+    _loadActivityOptions();
+  }
+  
+  // Load activity options from Firestore
+  Future<void> _loadActivityOptions() async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('admin_config')
+          .doc('kegiatan_activities')
+          .get();
+      
+      if (doc.exists && doc.data() != null) {
+        final data = doc.data()!;
+        if (data['items'] != null) {
+          activityList.value = List<String>.from(data['items']);
+          // Set default selected activity if list is not empty
+          if (activityList.isNotEmpty) {
+            selectedActivity.value = activityList.first;
+          }
+        }
+      } else {
+        // Fallback to default values if document doesn't exist
+        activityList.value = [
+          'Survei Evaluasi Budaya Organisasi',
+          '[ Reskilling ] E-Learning Peningkatan Kompetensi Pemecahan Masalah dan Pengambilan Keputusan',
+          '[ Reskilling II ] E-Learning Penguatan Kemampuan Analisis Pegawai dalam Menghadapi Ekosistem Kerja Baru',
+          'Pelaksanaan Survei Penguatan Budaya Kementerian Keuangan',
+          'Seminar PUG Kemenkeu 2023',
+          'E-Learning Mandatori Penegakan Disiplin',
+          'Kuesioner Piloting Presensi Melalui Aplikasi Satu Kemenkeu',
+          'Pengisian Survei Forum PINTAR',
+        ];
+        if (activityList.isNotEmpty) {
+          selectedActivity.value = activityList.first;
+        }
+      }
+    } catch (e) {
+      // Fallback to default values on error
+      activityList.value = [
+        'Survei Evaluasi Budaya Organisasi',
+        '[ Reskilling ] E-Learning Peningkatan Kompetensi Pemecahan Masalah dan Pengambilan Keputusan',
+        '[ Reskilling II ] E-Learning Penguatan Kemampuan Analisis Pegawai dalam Menghadapi Ekosistem Kerja Baru',
+        'Pelaksanaan Survei Penguatan Budaya Kementerian Keuangan',
+        'Seminar PUG Kemenkeu 2023',
+        'E-Learning Mandatori Penegakan Disiplin',
+        'Kuesioner Piloting Presensi Melalui Aplikasi Satu Kemenkeu',
+        'Pengisian Survei Forum PINTAR',
+      ];
+      if (activityList.isNotEmpty) {
+        selectedActivity.value = activityList.first;
+      }
+      Get.snackbar('Error', 'Failed to load activities: $e');
+    }
   }
 
   // Update the date display
