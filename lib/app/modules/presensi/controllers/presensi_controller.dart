@@ -19,10 +19,10 @@ class PresensiController extends GetxController {
     try {
       final userId = FirebaseAuth.instance.currentUser?.uid;
       if (userId != null) {
-        // Fetch from top-level "presensi" collection where userId matches current user
+        // Fetch all presensi data from all users
         final querySnapshot = await _firestore
             .collection('presensi')
-            .where('userId', isEqualTo: userId) // Filter by current user's ID
+            // Remove the userId filter to show all users' presensi
             .orderBy('createdAt', descending: true)
             .get();
 
