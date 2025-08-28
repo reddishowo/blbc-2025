@@ -10,22 +10,30 @@ class LemburView extends GetView<LemburController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      body: RefreshIndicator(
+        onRefresh: controller.fetchLembur, // Or refreshLembur if you implement it
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        if (controller.lemburList.isEmpty) {
-          return const Center(
-            child: Text(
-              'Belum ada kegiatan lembur yang ditambahkan.',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-          );
-        }
+          if (controller.lemburList.isEmpty) {
+            return ListView(
+              children: const [
+                SizedBox(height: 200),
+                Center(
+                  child: Text(
+                    'Belum ada kegiatan lembur yang ditambahkan.',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                ),
+              ],
+            );
+          }
 
-        return _buildGroupedLemburList();
-      }),
+          return _buildGroupedLemburList();
+        }),
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Get.toNamed(Routes.ADD_LEMBUR),
         label: const Text('Tambah Lembur'),

@@ -12,66 +12,36 @@ class LemburController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Check if user is logged in before starting the stream
-    if (FirebaseAuth.instance.currentUser != null) {
-      _startStream();
+    fetchLembur();
+  }
+
+  // Replace the stream approach with a simpler fetch method
+  Future<void> fetchLembur() async {
+    try {
+      isLoading.value = true;
+      
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('lembur')
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      lemburList.value = querySnapshot.docs
+          .map((doc) => LemburModel.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to fetch lembur: $e');
+    } finally {
+      isLoading.value = false;
     }
-
-    // Listen to auth state changes
-    FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      if (user != null) {
-        // User is logged in, start the stream
-        _startStream();
-      } else {
-        // User logged out, cancel the stream
-        _cancelStream();
-        // Clear the list
-        lemburList.clear();
-      }
-    });
   }
 
-  void _startStream() {
-    // Cancel any existing subscription first
-    _cancelStream();
-    // Start a new subscription
-    _subscription = fetchLemburStream().listen((data) {
-      lemburList.assignAll(data);
-      isLoading.value = false;
-    }, onError: (error) {
-      print('Firestore stream error: $error');
-      isLoading.value = false;
-    });
-  }
-
-  void _cancelStream() {
-    _subscription?.cancel();
-    _subscription = null;
-  }
-
-  /// **[MODIFIED]**
-  /// Creates a stream that listens to the entire 'lembur' collection in Firestore,
-  /// ordered by the newest entries first.
-  Stream<List<LemburModel>> fetchLemburStream() {
-    // The query now simply gets all documents from the collection without any filters.
-    return FirebaseFirestore.instance
-        .collection('lembur')
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map((querySnapshot) {
-          // Map the documents to our LemburModel
-          List<LemburModel> list = querySnapshot.docs
-              .map((doc) => LemburModel.fromFirestore(doc))
-              .toList();
-          // Update the loading state once data is loaded
-          isLoading.value = false;
-          return list;
-        });
+  Future<void> refreshLembur() async {
+    await fetchLembur();
   }
 
   @override
   void onClose() {
-    _cancelStream();
+    _subscription?.cancel();
     super.onClose();
   }
 }
