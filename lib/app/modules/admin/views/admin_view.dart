@@ -74,27 +74,41 @@ class AdminView extends GetView<AdminController> {
                   // Add initialization button
                   Container(
                     padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        Get.dialog(
-                          const Center(child: CircularProgressIndicator()),
-                          barrierDismissible: false,
-                        );
-                        await controller.initializeDefaultData();
-                        await controller.loadAllData();
-                        Get.back(); // Close loading dialog
-                        Get.snackbar(
-                          'Success', 
-                          'Admin configuration initialized successfully!',
-                          backgroundColor: Colors.green,
-                          colorText: Colors.white,
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.indigo,
-                      ),
-                      child: const Text('Initialize/Refresh Data'),
+                    child: Column(
+                      children: [
+                        ElevatedButton(
+                          onPressed: () async {
+                            Get.dialog(
+                              const Center(child: CircularProgressIndicator()),
+                              barrierDismissible: false,
+                            );
+                            await controller.initializeDefaultData();
+                            await controller.loadAllData();
+                            Get.back(); // Close loading dialog
+                            Get.snackbar(
+                              'Success', 
+                              'Admin configuration initialized successfully!',
+                              backgroundColor: Colors.green,
+                              colorText: Colors.white,
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: Colors.indigo,
+                          ),
+                          child: const Text('Initialize/Refresh Data'),
+                        ),
+                        const SizedBox(height: 8),
+                        ElevatedButton.icon(
+                          onPressed: () => Get.toNamed('/data-extraction'),
+                          icon: const Icon(Icons.download),
+                          label: const Text('Data Extraction'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            foregroundColor: Colors.white,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],

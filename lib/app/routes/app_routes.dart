@@ -17,6 +17,7 @@ abstract class Routes {
   static const PRESTASI = _Paths.PRESTASI;
   static const ADD_PRESTASI = _Paths.ADD_PRESTASI;
   static const ADMIN = _Paths.ADMIN;
+  static const DATA_EXTRACTION = _Paths.DATA_EXTRACTION;
 }
 
 abstract class _Paths {
@@ -36,4 +37,5 @@ abstract class _Paths {
   static const PRESTASI = '/prestasi';
   static const ADD_PRESTASI = '/add-prestasi';
   static const ADMIN = '/admin';
+  static const DATA_EXTRACTION = '/data-extraction';
 }

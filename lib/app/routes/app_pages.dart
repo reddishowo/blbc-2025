@@ -12,6 +12,8 @@ import '../modules/add_prestasi/bindings/add_prestasi_binding.dart';
 import '../modules/add_prestasi/views/add_prestasi_view.dart';
 import '../modules/admin/bindings/admin_binding.dart';
 import '../modules/admin/views/admin_view.dart';
+import '../modules/data_extraction/bindings/data_extraction_binding.dart';
+import '../modules/data_extraction/views/data_extraction_view.dart';
 import '../modules/auth/bindings/auth_binding.dart';
 import '../modules/home/bindings/home_binding.dart';
 import '../modules/home/views/home_view.dart';
@@ -113,6 +115,11 @@ class AppPages {
       name: _Paths.ADMIN,
       page: () => const AdminView(),
       binding: AdminBinding(),
+    ),
+    GetPage(
+      name: _Paths.DATA_EXTRACTION,
+      page: () => const DataExtractionView(),
+      binding: DataExtractionBinding(),
     ),
   ];
 }
