@@ -76,7 +76,7 @@ class AddOlahragaController extends GetxController {
       context: context,
       initialDate: selectedDate.value,
       firstDate: DateTime(2023),
-      lastDate: DateTime(2025),
+      lastDate: DateTime(2050),
     );
     
     if (pickedDate != null && pickedDate != selectedDate.value) {

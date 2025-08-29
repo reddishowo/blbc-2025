@@ -36,7 +36,11 @@ class OlahragaView extends GetView<OlahragaController> {
         }),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Get.toNamed(Routes.ADD_OLAHRAGA),
+        onPressed: () async {
+          await Get.toNamed(Routes.ADD_OLAHRAGA);
+          // Refresh data when returning from add page
+          controller.refreshOlahraga();
+        },
         label: const Text('Tambah Olahraga'),
         icon: const Icon(Icons.add),
       ),

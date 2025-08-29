@@ -15,6 +15,13 @@ class LemburController extends GetxController {
     fetchLembur();
   }
 
+  @override
+  void onReady() {
+    super.onReady();
+    // Refresh data when controller becomes ready (e.g., when returning to page)
+    fetchLembur();
+  }
+
   // Replace the stream approach with a simpler fetch method
   Future<void> fetchLembur() async {
     try {

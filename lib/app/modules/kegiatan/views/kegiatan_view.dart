@@ -41,7 +41,11 @@ class KegiatanView extends GetView<KegiatanController> {
         }),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Get.toNamed(Routes.ADD_KEGIATAN),
+        onPressed: () async {
+          await Get.toNamed(Routes.ADD_KEGIATAN);
+          // Refresh data when returning from add page
+          controller.refreshKegiatan();
+        },
         label: const Text('Tambah Kegiatan'),
         icon: const Icon(Icons.add),
       ),

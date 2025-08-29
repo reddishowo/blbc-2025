@@ -35,7 +35,11 @@ class LemburView extends GetView<LemburController> {
         }),
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => Get.toNamed(Routes.ADD_LEMBUR),
+        onPressed: () async {
+          await Get.toNamed(Routes.ADD_LEMBUR);
+          // Refresh data when returning from add page
+          controller.refreshLembur();
+        },
         label: const Text('Tambah Lembur'),
         icon: const Icon(Icons.add),
       ),

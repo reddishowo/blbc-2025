@@ -13,6 +13,13 @@ class OlahragaController extends GetxController {
     fetchOlahraga();
   }
 
+  @override
+  void onReady() {
+    super.onReady();
+    // Refresh data when controller becomes ready (e.g., when returning to page)
+    fetchOlahraga();
+  }
+
   Future<void> fetchOlahraga() async {
     try {
       isLoading.value = true;

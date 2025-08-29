@@ -13,6 +13,13 @@ class KegiatanController extends GetxController {
     fetchKegiatan();
   }
 
+  @override
+  void onReady() {
+    super.onReady();
+    // Refresh data when controller becomes ready (e.g., when returning to page)
+    fetchKegiatan();
+  }
+
   Future<void> fetchKegiatan() async {
     try {
       isLoading.value = true;
