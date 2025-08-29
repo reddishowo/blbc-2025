@@ -55,23 +55,25 @@ class AddLemburController extends GetxController {
       
       if (doc.exists && doc.data() != null) {
         final data = doc.data()!;
-        if (data['items'] != null) {
-          activityOptions.value = List<String>.from(data['items']);
-          // Set default selected activity if list is not empty
-          if (activityOptions.isNotEmpty) {
-            selectedActivity.value = activityOptions.first;
+        if (data['items'] != null && data['items'] is List) {
+          final items = List<String>.from(data['items']);
+          if (items.isNotEmpty) {
+            activityOptions.value = items;
+            selectedActivity.value = items.first;
+            return;
           }
         }
-      } else {
-        // Fallback to default values if document doesn't exist
-        activityOptions.value = ['Piket CPO / Lartas', 'Kegiatan Lain'];
-        selectedActivity.value = 'Piket CPO / Lartas';
       }
+      
+      // Fallback to default values
+      activityOptions.value = ['Piket CPO / Lartas', 'Kegiatan Lain'];
+      selectedActivity.value = 'Piket CPO / Lartas';
     } catch (e) {
+      print('Error loading lembur activities: $e');
       // Fallback to default values on error
       activityOptions.value = ['Piket CPO / Lartas', 'Kegiatan Lain'];
       selectedActivity.value = 'Piket CPO / Lartas';
-      Get.snackbar('Error', 'Failed to load activities: $e');
+      // Don't show error to user, just use defaults
     }
   }
 

@@ -436,4 +436,269 @@ class DataExtractionController extends GetxController {
   Future<void> refreshData() async {
     await loadAllUsers();
   }
+
+  // Extract all data methods
+  Future<void> extractAllLembur() async {
+    try {
+      isLoading.value = true;
+      QuerySnapshot snapshot = await _firestore.collection('lembur').get();
+
+      List<List<String>> excelData = [
+        ['User Name', 'Activity Type', 'Date', 'Start Time', 'End Time']
+      ];
+
+      for (var doc in snapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        
+        // Get user name from users collection
+        String userName = 'Unknown User';
+        try {
+          DocumentSnapshot userDoc = await _firestore
+              .collection('users')
+              .doc(data['userId'])
+              .get();
+          if (userDoc.exists) {
+            userName = (userDoc.data() as Map<String, dynamic>)['name'] ?? 'Unknown User';
+          }
+        } catch (e) {
+          userName = data['userName'] ?? 'Unknown User';
+        }
+
+        String formattedDate = '';
+        if (data['date'] != null) {
+          try {
+            if (data['date'] is Timestamp) {
+              formattedDate = DateFormat('dd/MM/yyyy').format((data['date'] as Timestamp).toDate());
+            } else {
+              formattedDate = data['date'].toString();
+            }
+          } catch (e) {
+            formattedDate = data['date'].toString();
+          }
+        }
+
+        excelData.add([
+          userName,
+          data['activityType']?.toString() ?? '',
+          formattedDate,
+          data['startTime']?.toString() ?? '',
+          data['endTime']?.toString() ?? '',
+        ]);
+      }
+
+      await _createAndOpenExcel('All_Lembur_Data_${DateTime.now().millisecondsSinceEpoch}.xlsx', 'All Lembur Data', excelData);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to extract all lembur data: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> extractAllPresensi() async {
+    try {
+      isLoading.value = true;
+      QuerySnapshot snapshot = await _firestore.collection('presensi').get();
+
+      List<List<String>> excelData = [
+        ['User Name', 'Kehadiran', 'Date', 'Location', 'Keterangan']
+      ];
+
+      for (var doc in snapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        
+        String userName = 'Unknown User';
+        try {
+          DocumentSnapshot userDoc = await _firestore
+              .collection('users')
+              .doc(data['userId'])
+              .get();
+          if (userDoc.exists) {
+            userName = (userDoc.data() as Map<String, dynamic>)['name'] ?? 'Unknown User';
+          }
+        } catch (e) {
+          userName = data['nama'] ?? 'Unknown User';
+        }
+
+        String formattedTime = '';
+        if (data['time'] != null) {
+          try {
+            if (data['time'] is Timestamp) {
+              formattedTime = DateFormat('dd/MM/yyyy').format((data['time'] as Timestamp).toDate());
+            } else {
+              formattedTime = data['time'].toString();
+            }
+          } catch (e) {
+            formattedTime = data['time'].toString();
+          }
+        }
+
+        excelData.add([
+          userName,
+          data['kehadiran']?.toString() ?? '',
+          formattedTime,
+          data['location']?.toString() ?? '',
+          data['keterangan']?.toString() ?? '',
+        ]);
+      }
+
+      await _createAndOpenExcel('All_Presensi_Data_${DateTime.now().millisecondsSinceEpoch}.xlsx', 'All Presensi Data', excelData);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to extract all presensi data: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> extractAllOlahraga() async {
+    try {
+      isLoading.value = true;
+      QuerySnapshot snapshot = await _firestore.collection('olahraga').get();
+
+      List<List<String>> excelData = [
+        ['User Name', 'Activity Type', 'Date', 'Start Time', 'End Time', 'Description']
+      ];
+
+      for (var doc in snapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        
+        String userName = 'Unknown User';
+        try {
+          DocumentSnapshot userDoc = await _firestore
+              .collection('users')
+              .doc(data['userId'])
+              .get();
+          if (userDoc.exists) {
+            userName = (userDoc.data() as Map<String, dynamic>)['name'] ?? 'Unknown User';
+          }
+        } catch (e) {
+          userName = data['userName'] ?? 'Unknown User';
+        }
+
+        String formattedDate = '';
+        if (data['date'] != null) {
+          try {
+            if (data['date'] is Timestamp) {
+              formattedDate = DateFormat('dd/MM/yyyy').format((data['date'] as Timestamp).toDate());
+            } else {
+              formattedDate = data['date'].toString();
+            }
+          } catch (e) {
+            formattedDate = data['date'].toString();
+          }
+        }
+
+        excelData.add([
+          userName,
+          data['activityType']?.toString() ?? '',
+          formattedDate,
+          data['startTime']?.toString() ?? '',
+          data['endTime']?.toString() ?? '',
+          data['description']?.toString() ?? '',
+        ]);
+      }
+
+      await _createAndOpenExcel('All_Olahraga_Data_${DateTime.now().millisecondsSinceEpoch}.xlsx', 'All Olahraga Data', excelData);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to extract all olahraga data: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> extractAllKegiatan() async {
+    try {
+      isLoading.value = true;
+      QuerySnapshot snapshot = await _firestore.collection('kegiatan').get();
+
+      List<List<String>> excelData = [
+        ['User Name', 'Activity Name', 'Date', 'Document Name']
+      ];
+
+      for (var doc in snapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        
+        String userName = 'Unknown User';
+        try {
+          DocumentSnapshot userDoc = await _firestore
+              .collection('users')
+              .doc(data['userId'])
+              .get();
+          if (userDoc.exists) {
+            userName = (userDoc.data() as Map<String, dynamic>)['name'] ?? 'Unknown User';
+          }
+        } catch (e) {
+          userName = data['userName'] ?? 'Unknown User';
+        }
+
+        String formattedDate = '';
+        if (data['date'] != null) {
+          try {
+            if (data['date'] is Timestamp) {
+              formattedDate = DateFormat('dd/MM/yyyy').format((data['date'] as Timestamp).toDate());
+            } else {
+              formattedDate = data['date'].toString();
+            }
+          } catch (e) {
+            formattedDate = data['date'].toString();
+          }
+        }
+
+        excelData.add([
+          userName,
+          data['activityName']?.toString() ?? '',
+          formattedDate,
+          data['documentName']?.toString() ?? '',
+        ]);
+      }
+
+      await _createAndOpenExcel('All_Kegiatan_Data_${DateTime.now().millisecondsSinceEpoch}.xlsx', 'All Kegiatan Data', excelData);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to extract all kegiatan data: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> extractAllPrestasi() async {
+    try {
+      isLoading.value = true;
+      QuerySnapshot snapshot = await _firestore.collection('prestasi').get();
+
+      List<List<String>> excelData = [
+        ['User Name', 'Recipient Name', 'Achievement Name', 'Giver Position', 'Giver Name', 'Certificate Number']
+      ];
+
+      for (var doc in snapshot.docs) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        
+        String userName = 'Unknown User';
+        try {
+          DocumentSnapshot userDoc = await _firestore
+              .collection('users')
+              .doc(data['userId'])
+              .get();
+          if (userDoc.exists) {
+            userName = (userDoc.data() as Map<String, dynamic>)['name'] ?? 'Unknown User';
+          }
+        } catch (e) {
+          userName = data['nama'] ?? 'Unknown User';
+        }
+
+        excelData.add([
+          userName,
+          data['recipientName']?.toString() ?? '',
+          data['namaPrestasi']?.toString() ?? '',
+          data['jabatanPemberi']?.toString() ?? '',
+          data['namaPemberi']?.toString() ?? '',
+          data['nomorSertifikat']?.toString() ?? '',
+        ]);
+      }
+
+      await _createAndOpenExcel('All_Prestasi_Data_${DateTime.now().millisecondsSinceEpoch}.xlsx', 'All Prestasi Data', excelData);
+    } catch (e) {
+      Get.snackbar('Error', 'Failed to extract all prestasi data: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
 }

@@ -13,22 +13,30 @@ class KegiatanView extends GetView<KegiatanController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      body: RefreshIndicator(
+        onRefresh: controller.refreshKegiatan,
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        if (controller.kegiatanList.isEmpty) {
-          return const Center(
-            child: Text(
-              'Belum ada bukti kegiatan yang ditambahkan.',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-          );
-        }
+          if (controller.kegiatanList.isEmpty) {
+            return ListView(
+              children: const [
+                SizedBox(height: 200),
+                Center(
+                  child: Text(
+                    'Belum ada bukti kegiatan yang ditambahkan.',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                ),
+              ],
+            );
+          }
 
-        return _buildGroupedKegiatanList();
-      }),
+          return _buildGroupedKegiatanList();
+        }),
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Get.toNamed(Routes.ADD_KEGIATAN),
         label: const Text('Tambah Kegiatan'),

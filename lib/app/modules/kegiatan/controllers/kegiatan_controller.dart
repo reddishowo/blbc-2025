@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:sppdn/app/models/kegiatan_data.dart';
 
@@ -9,20 +10,37 @@ class KegiatanController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    kegiatanList.bindStream(fetchKegiatanStream());
+    fetchKegiatan();
   }
 
-  Stream<List<KegiatanModel>> fetchKegiatanStream() {
-    return FirebaseFirestore.instance
-        .collection('kegiatan')
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map((querySnapshot) {
-          List<KegiatanModel> list = querySnapshot.docs
-              .map((doc) => KegiatanModel.fromFirestore(doc))
-              .toList();
-          isLoading.value = false;
-          return list;
-        });
+  Future<void> fetchKegiatan() async {
+    try {
+      isLoading.value = true;
+      
+      final User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        kegiatanList.clear();
+        return;
+      }
+
+      // Show all users' kegiatan data instead of just current user
+      final querySnapshot = await FirebaseFirestore.instance
+          .collection('kegiatan')
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      kegiatanList.value = querySnapshot.docs
+          .map((doc) => KegiatanModel.fromFirestore(doc))
+          .toList();
+    } catch (e) {
+      print('Error fetching kegiatan: $e');
+      kegiatanList.clear();
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> refreshKegiatan() async {
+    await fetchKegiatan();
   }
 }

@@ -94,13 +94,30 @@ class HomeView extends GetView<HomeController> {
               children: [
                 // Admin Panel - only show if user is admin
                 Obx(() {
-                  if (AuthController.instance.isAdmin) {
+                  final authController = AuthController.instance;
+                  // Check both user existence and admin role more thoroughly
+                  if (authController.firebaseUser.value != null && authController.isAdmin) {
                     return _buildDrawerItem(
                       icon: Icons.admin_panel_settings,
                       text: 'Admin Panel',
                       onTap: () {
                         Get.back(); // Close drawer
                         Get.toNamed('/admin');
+                      },
+                    );
+                  }
+                  return const SizedBox.shrink();
+                }),
+                // Data Extraction - only show if user is admin
+                Obx(() {
+                  final authController = AuthController.instance;
+                  if (authController.firebaseUser.value != null && authController.isAdmin) {
+                    return _buildDrawerItem(
+                      icon: Icons.download,
+                      text: 'Data Extraction',
+                      onTap: () {
+                        Get.back(); // Close drawer
+                        Get.toNamed('/data-extraction');
                       },
                     );
                   }

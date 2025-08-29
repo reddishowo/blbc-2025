@@ -56,30 +56,32 @@ class AddKegiatanController extends GetxController {
       
       if (doc.exists && doc.data() != null) {
         final data = doc.data()!;
-        if (data['items'] != null) {
-          activityList.value = List<String>.from(data['items']);
-          // Set default selected activity if list is not empty
-          if (activityList.isNotEmpty) {
-            selectedActivity.value = activityList.first;
+        if (data['items'] != null && data['items'] is List) {
+          final items = List<String>.from(data['items']);
+          if (items.isNotEmpty) {
+            activityList.value = items;
+            selectedActivity.value = items.first;
+            return;
           }
         }
-      } else {
-        // Fallback to default values if document doesn't exist
-        activityList.value = [
-          'Survei Evaluasi Budaya Organisasi',
-          '[ Reskilling ] E-Learning Peningkatan Kompetensi Pemecahan Masalah dan Pengambilan Keputusan',
-          '[ Reskilling II ] E-Learning Penguatan Kemampuan Analisis Pegawai dalam Menghadapi Ekosistem Kerja Baru',
-          'Pelaksanaan Survei Penguatan Budaya Kementerian Keuangan',
-          'Seminar PUG Kemenkeu 2023',
-          'E-Learning Mandatori Penegakan Disiplin',
-          'Kuesioner Piloting Presensi Melalui Aplikasi Satu Kemenkeu',
-          'Pengisian Survei Forum PINTAR',
-        ];
-        if (activityList.isNotEmpty) {
-          selectedActivity.value = activityList.first;
-        }
+      }
+      
+      // Fallback to default values
+      activityList.value = [
+        'Survei Evaluasi Budaya Organisasi',
+        '[ Reskilling ] E-Learning Peningkatan Kompetensi Pemecahan Masalah dan Pengambilan Keputusan',
+        '[ Reskilling II ] E-Learning Penguatan Kemampuan Analisis Pegawai dalam Menghadapi Ekosistem Kerja Baru',
+        'Pelaksanaan Survei Penguatan Budaya Kementerian Keuangan',
+        'Seminar PUG Kemenkeu 2023',
+        'E-Learning Mandatori Penegakan Disiplin',
+        'Kuesioner Piloting Presensi Melalui Aplikasi Satu Kemenkeu',
+        'Pengisian Survei Forum PINTAR',
+      ];
+      if (activityList.isNotEmpty) {
+        selectedActivity.value = activityList.first;
       }
     } catch (e) {
+      print('Error loading kegiatan activities: $e');
       // Fallback to default values on error
       activityList.value = [
         'Survei Evaluasi Budaya Organisasi',
@@ -94,7 +96,7 @@ class AddKegiatanController extends GetxController {
       if (activityList.isNotEmpty) {
         selectedActivity.value = activityList.first;
       }
-      Get.snackbar('Error', 'Failed to load activities: $e');
+      // Don't show error to user, just use defaults
     }
   }
 

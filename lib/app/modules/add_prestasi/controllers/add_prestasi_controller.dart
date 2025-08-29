@@ -55,23 +55,25 @@ class AddPrestasiController extends GetxController {
       
       if (doc.exists && doc.data() != null) {
         final data = doc.data()!;
-        if (data['items'] != null) {
-          jabatanOptions.value = List<String>.from(data['items']);
-          // Set default selected jabatan if list is not empty
-          if (jabatanOptions.isNotEmpty) {
-            selectedJabatan.value = jabatanOptions.first;
+        if (data['items'] != null && data['items'] is List) {
+          final items = List<String>.from(data['items']);
+          if (items.isNotEmpty) {
+            jabatanOptions.value = items;
+            selectedJabatan.value = items.first;
+            return;
           }
         }
-      } else {
-        // Fallback to default values if document doesn't exist
-        jabatanOptions.value = ['MENTERI', 'ES I', 'ES II', 'ES III', 'ES IV', 'Lainnya'];
-        selectedJabatan.value = 'MENTERI';
       }
+      
+      // Fallback to default values
+      jabatanOptions.value = ['MENTERI', 'ES I', 'ES II', 'ES III', 'ES IV', 'Lainnya'];
+      selectedJabatan.value = 'MENTERI';
     } catch (e) {
+      print('Error loading prestasi jabatan: $e');
       // Fallback to default values on error
       jabatanOptions.value = ['MENTERI', 'ES I', 'ES II', 'ES III', 'ES IV', 'Lainnya'];
       selectedJabatan.value = 'MENTERI';
-      Get.snackbar('Error', 'Failed to load jabatan options: $e');
+      // Don't show error to user, just use defaults
     }
   }
 

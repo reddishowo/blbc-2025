@@ -19,10 +19,9 @@ class PresensiController extends GetxController {
     try {
       final userId = FirebaseAuth.instance.currentUser?.uid;
       if (userId != null) {
-        // Fetch all presensi data from all users
+        // Fetch all users' presensi data
         final querySnapshot = await _firestore
             .collection('presensi')
-            // Remove the userId filter to show all users' presensi
             .orderBy('createdAt', descending: true)
             .get();
 
@@ -31,9 +30,13 @@ class PresensiController extends GetxController {
             .toList();
 
         presensiList.assignAll(presensiData);
+      } else {
+        presensiList.clear();
       }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to fetch presensi data: $e');
+      print('Error fetching presensi: $e');
+      // If no data exists, just show empty list instead of error
+      presensiList.clear();
     } finally {
       isLoading.value = false;
     }

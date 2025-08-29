@@ -17,7 +17,13 @@ class PrestasiController extends GetxController {
     try {
       isLoading.value = true;
       
-      // Remove user filter to show all prestasi
+      final User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        prestasiList.clear();
+        return;
+      }
+
+      // Fetch all users' prestasi data instead of just current user
       final querySnapshot = await FirebaseFirestore.instance
           .collection('prestasi')
           .get();
@@ -34,7 +40,8 @@ class PrestasiController extends GetxController {
           .map((doc) => PrestasiData.fromFirestore(doc.data(), doc.id))
           .toList();
     } catch (e) {
-      Get.snackbar('Error', 'Failed to fetch prestasi: $e');
+      print('Error fetching prestasi: $e');
+      prestasiList.clear();
     } finally {
       isLoading.value = false;
     }

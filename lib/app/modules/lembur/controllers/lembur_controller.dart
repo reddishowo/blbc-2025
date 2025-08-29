@@ -20,6 +20,13 @@ class LemburController extends GetxController {
     try {
       isLoading.value = true;
       
+      final User? user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        lemburList.clear();
+        return;
+      }
+
+      // Show all users' lembur data instead of just current user
       final querySnapshot = await FirebaseFirestore.instance
           .collection('lembur')
           .orderBy('createdAt', descending: true)
@@ -29,7 +36,9 @@ class LemburController extends GetxController {
           .map((doc) => LemburModel.fromFirestore(doc))
           .toList();
     } catch (e) {
-      Get.snackbar('Error', 'Failed to fetch lembur: $e');
+      print('Error fetching lembur: $e');
+      // If no data exists, just show empty list instead of error
+      lemburList.clear();
     } finally {
       isLoading.value = false;
     }

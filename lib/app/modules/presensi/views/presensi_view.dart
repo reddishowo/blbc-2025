@@ -8,12 +8,15 @@ class PresensiView extends GetView<PresensiController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(
-        () => controller.isLoading.value
-            ? const Center(child: CircularProgressIndicator())
-            : controller.presensiList.isEmpty
-                ? const Center(child: Text('Tidak ada data presensi'))
-                : _buildGroupedListView(),
+      body: RefreshIndicator(
+        onRefresh: controller.fetchPresensiData,
+        child: Obx(
+          () => controller.isLoading.value
+              ? const Center(child: CircularProgressIndicator())
+              : controller.presensiList.isEmpty
+                  ? const Center(child: Text('Tidak ada data presensi'))
+                  : _buildGroupedListView(),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed('/add-presensi'),

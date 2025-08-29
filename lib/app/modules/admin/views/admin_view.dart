@@ -71,57 +71,20 @@ class AdminView extends GetView<AdminController> {
                       Tab(text: 'Prestasi'),
                     ],
                   ),
-                  // Add initialization button
-                  Container(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        ElevatedButton(
-                          onPressed: () async {
-                            Get.dialog(
-                              const Center(child: CircularProgressIndicator()),
-                              barrierDismissible: false,
-                            );
-                            await controller.initializeDefaultData();
-                            await controller.loadAllData();
-                            Get.back(); // Close loading dialog
-                            Get.snackbar(
-                              'Success', 
-                              'Admin configuration initialized successfully!',
-                              backgroundColor: Colors.green,
-                              colorText: Colors.white,
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white,
-                            foregroundColor: Colors.indigo,
-                          ),
-                          child: const Text('Initialize/Refresh Data'),
-                        ),
-                        const SizedBox(height: 8),
-                        ElevatedButton.icon(
-                          onPressed: () => Get.toNamed('/data-extraction'),
-                          icon: const Icon(Icons.download),
-                          label: const Text('Data Extraction'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange,
-                            foregroundColor: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),
             Expanded(
-              child: TabBarView(
-                children: [
-                  _buildLemburTab(),
-                  _buildPresensiTab(),
-                  _buildKegiatanTab(),
-                  _buildPrestasiTab(),
-                ],
+              child: RefreshIndicator(
+                onRefresh: controller.loadAllData,
+                child: TabBarView(
+                  children: [
+                    _buildLemburTab(),
+                    _buildPresensiTab(),
+                    _buildKegiatanTab(),
+                    _buildPrestasiTab(),
+                  ],
+                ),
               ),
             ),
           ],
@@ -131,24 +94,25 @@ class AdminView extends GetView<AdminController> {
   }
 
   Widget _buildLemburTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Manage Lembur Activities',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          _buildAddItemSection(
-            controller: controller.lemburController,
-            hintText: 'Add new lembur activity',
-            onAdd: () => controller.addLemburActivity(controller.lemburController.text),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: Obx(() {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Manage Lembur Activities',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            _buildAddItemSection(
+              controller: controller.lemburController,
+              hintText: 'Add new lembur activity',
+              onAdd: () => controller.addLemburActivity(controller.lemburController.text),
+            ),
+            const SizedBox(height: 16),
+            Obx(() {
               if (controller.isLoadingLembur.value) {
                 return const Center(child: CircularProgressIndicator());
               }
@@ -163,6 +127,8 @@ class AdminView extends GetView<AdminController> {
               }
               
               return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: controller.lemburActivityList.length,
                 itemBuilder: (context, index) {
                   final activity = controller.lemburActivityList[index];
@@ -177,31 +143,32 @@ class AdminView extends GetView<AdminController> {
                 },
               );
             }),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildPresensiTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Manage Presensi Kehadiran',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          _buildAddItemSection(
-            controller: controller.presensiController,
-            hintText: 'Add new kehadiran type',
-            onAdd: () => controller.addPresensiKehadiran(controller.presensiController.text),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: Obx(() {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Manage Presensi Kehadiran',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            _buildAddItemSection(
+              controller: controller.presensiController,
+              hintText: 'Add new kehadiran type',
+              onAdd: () => controller.addPresensiKehadiran(controller.presensiController.text),
+            ),
+            const SizedBox(height: 16),
+            Obx(() {
               if (controller.isLoadingPresensi.value) {
                 return const Center(child: CircularProgressIndicator());
               }
@@ -216,6 +183,8 @@ class AdminView extends GetView<AdminController> {
               }
               
               return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: controller.presensiKehadiranList.length,
                 itemBuilder: (context, index) {
                   final kehadiran = controller.presensiKehadiranList[index];
@@ -230,31 +199,32 @@ class AdminView extends GetView<AdminController> {
                 },
               );
             }),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildKegiatanTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Manage Kegiatan Activities',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          _buildAddItemSection(
-            controller: controller.kegiatanController,
-            hintText: 'Add new kegiatan activity',
-            onAdd: () => controller.addKegiatanActivity(controller.kegiatanController.text),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: Obx(() {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Manage Kegiatan Activities',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            _buildAddItemSection(
+              controller: controller.kegiatanController,
+              hintText: 'Add new kegiatan activity',
+              onAdd: () => controller.addKegiatanActivity(controller.kegiatanController.text),
+            ),
+            const SizedBox(height: 16),
+            Obx(() {
               if (controller.isLoadingKegiatan.value) {
                 return const Center(child: CircularProgressIndicator());
               }
@@ -269,6 +239,8 @@ class AdminView extends GetView<AdminController> {
               }
               
               return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: controller.kegiatanActivityList.length,
                 itemBuilder: (context, index) {
                   final activity = controller.kegiatanActivityList[index];
@@ -283,31 +255,32 @@ class AdminView extends GetView<AdminController> {
                 },
               );
             }),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildPrestasiTab() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Manage Prestasi Jabatan',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          _buildAddItemSection(
-            controller: controller.prestasiController,
-            hintText: 'Add new jabatan',
-            onAdd: () => controller.addPrestasiJabatan(controller.prestasiController.text),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: Obx(() {
+    return SingleChildScrollView(
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Manage Prestasi Jabatan',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            _buildAddItemSection(
+              controller: controller.prestasiController,
+              hintText: 'Add new jabatan',
+              onAdd: () => controller.addPrestasiJabatan(controller.prestasiController.text),
+            ),
+            const SizedBox(height: 16),
+            Obx(() {
               if (controller.isLoadingPrestasi.value) {
                 return const Center(child: CircularProgressIndicator());
               }
@@ -322,6 +295,8 @@ class AdminView extends GetView<AdminController> {
               }
               
               return ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: controller.prestasiJabatanList.length,
                 itemBuilder: (context, index) {
                   final jabatan = controller.prestasiJabatanList[index];
@@ -336,8 +311,8 @@ class AdminView extends GetView<AdminController> {
                 },
               );
             }),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

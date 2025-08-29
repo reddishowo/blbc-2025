@@ -23,10 +23,24 @@ class AuthController extends GetxController {
 
   bool get isAdmin {
     if (_firestoreUser.value != null && _firestoreUser.value!.exists) {
-      final data = _firestoreUser.value!.data() as Map<String, dynamic>;
-      return data.containsKey('role') && data['role'] == 'admin';
+      final data = _firestoreUser.value!.data() as Map<String, dynamic>?;
+      if (data != null) {
+        return data['role'] == 'admin';
+      }
     }
     return false;
+  }
+
+  // Add reactive getter for admin status
+  RxBool get isAdminReactive {
+    final result = false.obs;
+    if (_firestoreUser.value != null && _firestoreUser.value!.exists) {
+      final data = _firestoreUser.value!.data() as Map<String, dynamic>?;
+      if (data != null) {
+        result.value = data['role'] == 'admin';
+      }
+    }
+    return result;
   }
 
   @override
@@ -88,6 +102,7 @@ class AuthController extends GetxController {
       final List<String> adminEmails = [
         'admin@sppdn.com',
         'sbuki.blbc@gmail.com',
+        'kknurarief112@gmail.com', // Add Exortice admin email
       ];
 
       if (adminEmails.contains(freshUser.email)) {
@@ -153,7 +168,7 @@ class AuthController extends GetxController {
   Future<void> signInWithGoogle() async {
     try {
       isLoading.value = true;
-      await _googleSignIn.signOut().catchError((_) {});
+      await _googleSignIn.signOut().catchError((_) => null);
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) { 
         isLoading.value = false; 
@@ -184,11 +199,8 @@ class AuthController extends GetxController {
 
   Future<void> signOut() async {
     try {
-      await Future.wait([
-        _googleSignIn.signOut(),
-        _auth.signOut(),
-      // ignore: body_might_complete_normally_catch_error
-      ]).catchError((_) {});
+      await _googleSignIn.signOut();
+      await _auth.signOut();
     } catch (e) {
       Get.snackbar('Error', 'Gagal sign out: ${e.toString()}', snackPosition: SnackPosition.BOTTOM);
     }

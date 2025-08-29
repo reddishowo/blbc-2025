@@ -11,32 +11,37 @@ class PrestasiView extends GetView<PrestasiController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      body: RefreshIndicator(
+        onRefresh: controller.refreshPrestasi,
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        if (controller.prestasiList.isEmpty) {
-          return const Center(
-            child: Text(
-              'Belum ada data prestasi',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-          );
-        }
+          if (controller.prestasiList.isEmpty) {
+            return ListView(
+              children: const [
+                SizedBox(height: 200),
+                Center(
+                  child: Text(
+                    'Belum ada data prestasi',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                ),
+              ],
+            );
+          }
 
-        return RefreshIndicator(
-          onRefresh: controller.refreshPrestasi,
-          child: ListView.builder(
+          return ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: controller.prestasiList.length,
             itemBuilder: (context, index) {
               final prestasi = controller.prestasiList[index];
               return _buildPrestasiCard(prestasi);
             },
-          ),
-        );
-      }),
+          );
+        }),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Get.toNamed(Routes.ADD_PRESTASI),
         child: const Icon(Icons.add),

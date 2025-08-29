@@ -66,23 +66,25 @@ class AddPresensiController extends GetxController {
       
       if (doc.exists && doc.data() != null) {
         final data = doc.data()!;
-        if (data['items'] != null) {
-          kehadiranOptions.value = List<String>.from(data['items']);
-          // Set default selected kehadiran if list is not empty
-          if (kehadiranOptions.isNotEmpty) {
-            selectedKehadiran.value = kehadiranOptions.first;
+        if (data['items'] != null && data['items'] is List) {
+          final items = List<String>.from(data['items']);
+          if (items.isNotEmpty) {
+            kehadiranOptions.value = items;
+            selectedKehadiran.value = items.first;
+            return;
           }
         }
-      } else {
-        // Fallback to default values if document doesn't exist
-        kehadiranOptions.value = ['WFH', 'WFO', 'WFHB', 'CUTI', 'ST'];
-        selectedKehadiran.value = 'WFH';
       }
+      
+      // Fallback to default values
+      kehadiranOptions.value = ['WFH', 'WFO', 'WFHB', 'CUTI', 'ST'];
+      selectedKehadiran.value = 'WFH';
     } catch (e) {
+      print('Error loading kehadiran options: $e');
       // Fallback to default values on error
       kehadiranOptions.value = ['WFH', 'WFO', 'WFHB', 'CUTI', 'ST'];
       selectedKehadiran.value = 'WFH';
-      Get.snackbar('Error', 'Failed to load kehadiran options: $e');
+      // Don't show error to user, just use defaults
     }
   }
 

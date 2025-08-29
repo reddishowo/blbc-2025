@@ -11,22 +11,30 @@ class OlahragaView extends GetView<OlahragaController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      body: RefreshIndicator(
+        onRefresh: controller.refreshOlahraga,
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        if (controller.olahragaList.isEmpty) {
-          return const Center(
-            child: Text(
-              'Belum ada kegiatan olahraga yang ditambahkan.',
-              style: TextStyle(fontSize: 16, color: Colors.grey),
-            ),
-          );
-        }
+          if (controller.olahragaList.isEmpty) {
+            return ListView(
+              children: const [
+                SizedBox(height: 200),
+                Center(
+                  child: Text(
+                    'Belum ada kegiatan olahraga yang ditambahkan.',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                ),
+              ],
+            );
+          }
 
-        return _buildGroupedOlahragaList();
-      }),
+          return _buildGroupedOlahragaList();
+        }),
+      ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => Get.toNamed(Routes.ADD_OLAHRAGA),
         label: const Text('Tambah Olahraga'),

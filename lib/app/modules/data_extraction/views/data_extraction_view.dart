@@ -51,16 +51,93 @@ class DataExtractionView extends GetView<DataExtractionController> {
 
         return RefreshIndicator(
           onRefresh: controller.refreshData,
-          child: ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: controller.allUsers.length,
-            itemBuilder: (context, index) {
-              final user = controller.allUsers[index];
-              return _buildUserCard(user);
-            },
+          child: Column(
+            children: [
+              _buildBulkExtractionSection(),
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: controller.allUsers.length,
+                  itemBuilder: (context, index) {
+                    final user = controller.allUsers[index];
+                    return _buildUserCard(user);
+                  },
+                ),
+              ),
+            ],
           ),
         );
       }),
+    );
+  }
+
+  Widget _buildBulkExtractionSection() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      color: Colors.grey[100],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Extract All Users Data',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF6366F1),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _buildBulkExtractButton(
+                'All Lembur',
+                Icons.work_history,
+                () => controller.extractAllLembur(),
+              ),
+              _buildBulkExtractButton(
+                'All Presensi',
+                Icons.check_circle_outline,
+                () => controller.extractAllPresensi(),
+              ),
+              _buildBulkExtractButton(
+                'All Olahraga',
+                Icons.sports_soccer,
+                () => controller.extractAllOlahraga(),
+              ),
+              _buildBulkExtractButton(
+                'All Kegiatan',
+                Icons.event,
+                () => controller.extractAllKegiatan(),
+              ),
+              _buildBulkExtractButton(
+                'All Prestasi',
+                Icons.emoji_events,
+                () => controller.extractAllPrestasi(),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          const Divider(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBulkExtractButton(String label, IconData icon, VoidCallback onPressed) {
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon, size: 16),
+      label: Text(label),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xFF10B981),
+        foregroundColor: Colors.white,
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 8,
+        ),
+      ),
     );
   }
 
