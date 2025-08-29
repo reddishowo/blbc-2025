@@ -98,18 +98,9 @@ class AuthController extends GetxController {
 
     if (!doc.exists) {
       userData['createdAt'] = FieldValue.serverTimestamp();
-      
-      final List<String> adminEmails = [
-        'admin@sppdn.com',
-        'sbuki.blbc@gmail.com',
-        'kknurarief112@gmail.com', // Add Exortice admin email
-      ];
-
-      if (adminEmails.contains(freshUser.email)) {
-        userData['role'] = 'admin';
-      } else {
-        userData['role'] = 'user';
-      }
+      // Set default role as 'user' for new accounts
+      // To make someone admin, manually edit their role field in Firestore console
+      userData['role'] = 'user';
     }
     
     await docRef.set(userData, SetOptions(merge: true));
