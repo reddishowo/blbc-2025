@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../auth/controllers/auth_controller.dart';
 
 class ProfileController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -104,6 +105,9 @@ class ProfileController extends GetxController {
 
         // Update local data
         currentUserName.value = nameController.text.trim();
+        
+        // Refresh Firebase user data to trigger reactive updates in other views
+        await AuthController.instance.refreshUserData();
         
         isEditing.value = false;
 

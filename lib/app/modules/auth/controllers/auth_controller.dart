@@ -107,7 +107,19 @@ class AuthController extends GetxController {
     firebaseUser.value = _auth.currentUser;
   }
 
-  // **PERUBAHAN: Fungsi `updateUserName` telah dihapus sepenuhnya.**
+  // Method to refresh Firebase user data and trigger reactive updates
+  Future<void> refreshUserData() async {
+    try {
+      final currentUser = _auth.currentUser;
+      if (currentUser != null) {
+        await currentUser.reload();
+        firebaseUser.value = _auth.currentUser;
+        update(); // Trigger GetX update for any dependent widgets
+      }
+    } catch (e) {
+      print('Error refreshing user data: $e');
+    }
+  }
 
   // ... (sisa kode register, login, dll. tetap sama) ...
   Future<void> register(String name, String email, String password) async {
