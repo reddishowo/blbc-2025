@@ -84,9 +84,7 @@ class KegiatanView extends GetView<KegiatanController> {
 
           // Format the date for display
           final date = DateTime.parse(dateKey);
-          String formattedDate = DateFormat('EEEE, dd/MM/yyyy', 'id_ID').format(date);
-          // Capitalize first letter
-          formattedDate = formattedDate[0].toUpperCase() + formattedDate.substring(1);
+          String formattedDate = _formatDateWithToday(date);
 
           // Return the date header
           return Container(
@@ -200,7 +198,7 @@ class KegiatanView extends GetView<KegiatanController> {
   // Method to show detailed kegiatan information in a dialog
   void _showKegiatanDetail(dynamic kegiatan) {
     final DateTime kegiatanDate = kegiatan.date.toDate();
-    final formattedDate = DateFormat('EEEE, d MMMM yyyy', 'id_ID').format(kegiatanDate);
+    final formattedDate = _formatDateWithToday(kegiatanDate);
     final String fileName = kegiatan.documentName.toLowerCase();
     final bool isImage = fileName.endsWith('.png') || 
                           fileName.endsWith('.jpg') || 
@@ -461,6 +459,24 @@ class KegiatanView extends GetView<KegiatanController> {
         'Cannot open document: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
       );
+    }
+  }
+
+  // Helper method to format date with "Today" and "Yesterday"
+  String _formatDateWithToday(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final dateToCheck = DateTime(date.year, date.month, date.day);
+    
+    if (dateToCheck == today) {
+      return 'Today';
+    } else if (dateToCheck == yesterday) {
+      return 'Yesterday';
+    } else {
+      String formattedDate = DateFormat('EEEE, dd/MM/yyyy', 'id_ID').format(date);
+      // Capitalize first letter
+      return formattedDate[0].toUpperCase() + formattedDate.substring(1);
     }
   }
 }

@@ -122,9 +122,7 @@ class OlahragaView extends GetView<OlahragaController> {
 
           // Format the date for display
           final date = DateTime.parse(dateKey);
-          String formattedDate = DateFormat('EEEE, dd/MM/yyyy', 'id_ID').format(date);
-          // Capitalize first letter
-          formattedDate = formattedDate[0].toUpperCase() + formattedDate.substring(1);
+          String formattedDate = _formatDateWithToday(date);
 
           // Return the date header
           return Container(
@@ -200,7 +198,7 @@ class OlahragaView extends GetView<OlahragaController> {
   // Method to show detailed olahraga information in a dialog
   void _showOlahragaDetail(dynamic olahraga) {
     final DateTime olahragaDate = olahraga.date.toDate();
-    final formattedDate = DateFormat('EEEE, d MMMM yyyy', 'id_ID').format(olahragaDate);
+    final formattedDate = _formatDateWithToday(olahragaDate);
     
     // Calculate duration for the detail view
     final duration = _calculateDuration(olahraga.startTime, olahraga.endTime);
@@ -351,5 +349,23 @@ class OlahragaView extends GetView<OlahragaController> {
         ],
       ),
     );
+  }
+
+  // Helper method to format date with "Today" and "Yesterday"
+  String _formatDateWithToday(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final dateToCheck = DateTime(date.year, date.month, date.day);
+    
+    if (dateToCheck == today) {
+      return 'Today';
+    } else if (dateToCheck == yesterday) {
+      return 'Yesterday';
+    } else {
+      String formattedDate = DateFormat('EEEE, dd/MM/yyyy', 'id_ID').format(date);
+      // Capitalize first letter
+      return formattedDate[0].toUpperCase() + formattedDate.substring(1);
+    }
   }
 }

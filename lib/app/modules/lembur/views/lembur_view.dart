@@ -78,9 +78,7 @@ class LemburView extends GetView<LemburController> {
 
           // Format the date for display
           final date = DateTime.parse(dateKey);
-          String formattedDate = DateFormat('EEEE, dd/MM/yyyy', 'id_ID').format(date);
-          // Capitalize first letter
-          formattedDate = formattedDate[0].toUpperCase() + formattedDate.substring(1);
+          String formattedDate = _formatDateWithToday(date);
 
           // Return the date header
           return Container(
@@ -147,7 +145,7 @@ class LemburView extends GetView<LemburController> {
   // Method to show detailed lembur information in a dialog
   void _showLemburDetail(dynamic lembur) {
     final DateTime lemburDate = lembur.date.toDate();
-    final formattedDate = DateFormat('EEEE, d MMMM yyyy', 'id_ID').format(lemburDate);
+    final formattedDate = _formatDateWithToday(lemburDate);
 
     Get.dialog(
       Dialog(
@@ -295,5 +293,23 @@ class LemburView extends GetView<LemburController> {
         ],
       ),
     );
+  }
+
+  // Helper method to format date with "Today" and "Yesterday"
+  String _formatDateWithToday(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = today.subtract(const Duration(days: 1));
+    final dateToCheck = DateTime(date.year, date.month, date.day);
+    
+    if (dateToCheck == today) {
+      return 'Today';
+    } else if (dateToCheck == yesterday) {
+      return 'Yesterday';
+    } else {
+      String formattedDate = DateFormat('EEEE, dd/MM/yyyy', 'id_ID').format(date);
+      // Capitalize first letter
+      return formattedDate[0].toUpperCase() + formattedDate.substring(1);
+    }
   }
 }
