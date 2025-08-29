@@ -43,8 +43,7 @@ class AddPresensiController extends GetxController {
     super.onInit();
     requestLocationPermission();
     // Pre-fill user data when the controller is initialized
-    final user = AuthController.instance.firebaseUser.value;
-    namaController.text = user?.displayName ?? 'User Name Not Found';
+    _loadUserData();
     
     // Set current time
     updateCurrentTime();
@@ -54,6 +53,29 @@ class AddPresensiController extends GetxController {
     
     // Load kehadiran options from Firestore
     _loadKehadiranOptions();
+  }
+
+  // Load user data from Firestore
+  Future<void> _loadUserData() async {
+    try {
+      final user = AuthController.instance.firebaseUser.value;
+      if (user != null) {
+        // Try to get name from Firestore first, then fallback to displayName
+        final userDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+        if (userDoc.exists) {
+          final userData = userDoc.data()!;
+          namaController.text = userData['name'] ?? user.displayName ?? 'User Name Not Found';
+        } else {
+          namaController.text = user.displayName ?? 'User Name Not Found';
+        }
+      } else {
+        namaController.text = 'User Name Not Found';
+      }
+    } catch (e) {
+      // Fallback to displayName if Firestore fails
+      final user = AuthController.instance.firebaseUser.value;
+      namaController.text = user?.displayName ?? 'User Name Not Found';
+    }
   }
   
   // Load kehadiran options from Firestore

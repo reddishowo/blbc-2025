@@ -123,6 +123,14 @@ class HomeView extends GetView<HomeController> {
                   }
                   return const SizedBox.shrink();
                 }),
+                _buildDrawerItem(
+                  icon: Icons.person,
+                  text: 'Profile',
+                  onTap: () {
+                    Get.back(); // Close drawer
+                    Get.toNamed('/profile');
+                  },
+                ),
                 _buildDrawerItem(icon: Icons.info_outline_rounded, text: 'About', onTap: () {}),
               ],
             ),

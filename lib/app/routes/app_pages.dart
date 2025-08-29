@@ -31,6 +31,8 @@ import '../modules/prestasi/bindings/prestasi_binding.dart';
 import '../modules/prestasi/views/prestasi_view.dart';
 import '../modules/register/bindings/register_binding.dart';
 import '../modules/register/views/register_view.dart';
+import '../modules/profile/bindings/profile_binding.dart';
+import '../modules/profile/views/profile_view.dart';
 
 // ignore_for_file: constant_identifier_names
 
@@ -120,6 +122,11 @@ class AppPages {
       name: _Paths.DATA_EXTRACTION,
       page: () => const DataExtractionView(),
       binding: DataExtractionBinding(),
+    ),
+    GetPage(
+      name: _Paths.PROFILE,
+      page: () => const ProfileView(),
+      binding: ProfileBinding(),
     ),
   ];
 }

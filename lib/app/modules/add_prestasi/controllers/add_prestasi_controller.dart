@@ -35,14 +35,40 @@ class AddPrestasiController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Pre-fill user data when the controller is initialized
-    final user = AuthController.instance.firebaseUser.value;
-    nameController.text = user?.displayName ?? 'User Name Not Found';
-    // Also prefill the recipient name with the user's name, but this can be changed
-    recipientNameController.text = user?.displayName ?? 'User Name Not Found';
-    
-    // Load jabatan options from Firestore
+    // Load user data and jabatan options
+    _loadUserData();
     _loadJabatanOptions();
+  }
+
+  // Load user data from Firestore to get latest name information
+  Future<void> _loadUserData() async {
+    try {
+      final user = AuthController.instance.firebaseUser.value;
+      if (user != null) {
+        // Try to get the name from Firestore first for most up-to-date info
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+        
+        final userName = userDoc.exists && userDoc.data()?['name'] != null
+            ? userDoc.data()!['name'] as String
+            : user.displayName ?? 'User Name Not Found';
+        
+        nameController.text = userName;
+        // Also prefill the recipient name with the user's name, but this can be changed
+        recipientNameController.text = userName;
+      } else {
+        nameController.text = 'User Name Not Found';
+        recipientNameController.text = 'User Name Not Found';
+      }
+    } catch (e) {
+      // Fallback to cached displayName if Firestore fails
+      final user = AuthController.instance.firebaseUser.value;
+      final fallbackName = user?.displayName ?? 'User Name Not Found';
+      nameController.text = fallbackName;
+      recipientNameController.text = fallbackName;
+    }
   }
   
   // Load jabatan options from Firestore
