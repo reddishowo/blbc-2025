@@ -11,12 +11,28 @@ class DataExtractionController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   
   final RxList<Map<String, dynamic>> allUsers = <Map<String, dynamic>>[].obs;
+  final RxList<Map<String, dynamic>> filteredUsers = <Map<String, dynamic>>[].obs;
   final RxBool isLoading = false.obs;
+  final TextEditingController searchController = TextEditingController();
+  final RxString searchQuery = ''.obs;
+  final RxBool isBulkSectionExpanded = false.obs;
 
   @override
   void onInit() {
     super.onInit();
     loadAllUsers();
+    
+    // Listen to search query changes
+    searchController.addListener(() {
+      searchQuery.value = searchController.text;
+      filterUsers();
+    });
+  }
+
+  @override
+  void onClose() {
+    searchController.dispose();
+    super.onClose();
   }
 
   Future<void> loadAllUsers() async {
@@ -30,11 +46,39 @@ class DataExtractionController extends GetxController {
         userData['uid'] = doc.id;
         allUsers.add(userData);
       }
+      
+      // Initialize filtered users with all users
+      filterUsers();
     } catch (e) {
       Get.snackbar('Error', 'Failed to load users: $e');
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void filterUsers() {
+    if (searchQuery.value.isEmpty) {
+      filteredUsers.assignAll(allUsers);
+    } else {
+      final query = searchQuery.value.toLowerCase();
+      filteredUsers.assignAll(
+        allUsers.where((user) {
+          final name = user['name']?.toString().toLowerCase() ?? '';
+          final email = user['email']?.toString().toLowerCase() ?? '';
+          return name.contains(query) || email.contains(query);
+        }).toList(),
+      );
+    }
+  }
+
+  void clearSearch() {
+    searchController.clear();
+    searchQuery.value = '';
+    filterUsers();
+  }
+
+  void toggleBulkSection() {
+    isBulkSectionExpanded.value = !isBulkSectionExpanded.value;
   }
 
   void showExtractDialog(Map<String, dynamic> user) {
@@ -411,18 +455,39 @@ class DataExtractionController extends GetxController {
         // Open the file
         try {
           OpenResult result = await OpenFile.open(filePath);
-          if (result.type != ResultType.done) {
+          print('OpenFile result: ${result.type}, message: ${result.message}');
+          
+          if (result.type == ResultType.done) {
+            print('File opened successfully');
+          } else if (result.type == ResultType.noAppToOpen) {
             Get.snackbar(
               'Info', 
-              'File saved but could not open automatically. Please check: ${directory.path}',
-              duration: const Duration(seconds: 4),
+              'No app found to open Excel files. Please install Microsoft Excel or Google Sheets.\nFile saved to: ${directory.path}',
+              duration: const Duration(seconds: 6),
+              backgroundColor: Colors.orange,
+              colorText: Colors.white,
+            );
+          } else if (result.type == ResultType.permissionDenied) {
+            Get.snackbar(
+              'Info', 
+              'Permission denied to open file. Please check file manually at: ${directory.path}',
+              duration: const Duration(seconds: 5),
+              backgroundColor: Colors.orange,
+              colorText: Colors.white,
+            );
+          } else {
+            Get.snackbar(
+              'Info', 
+              'File saved successfully but could not open automatically.\nLocation: ${directory.path}\nTry opening with a file manager.',
+              duration: const Duration(seconds: 6),
             );
           }
         } catch (e) {
+          print('Error opening file: $e');
           Get.snackbar(
             'Info', 
-            'File saved but could not open automatically: ${directory.path}',
-            duration: const Duration(seconds: 4),
+            'File saved successfully at: ${directory.path}\nPlease open manually with Excel or file manager.',
+            duration: const Duration(seconds: 5),
           );
         }
       } else {

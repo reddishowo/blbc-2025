@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:open_file/open_file.dart';
 
 import '../controllers/prestasi_controller.dart';
 import '../../../routes/app_pages.dart';
@@ -274,13 +277,88 @@ class PrestasiView extends GetView<PrestasiController> {
       return;
     }
 
-    final Uri uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } else {
+    try {
+      // Show loading dialog
+      Get.dialog(
+        const Center(
+          child: Card(
+            child: Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Downloading document...'),
+                ],
+              ),
+            ),
+          ),
+        ),
+        barrierDismissible: false,
+      );
+
+      // Get file name from URL
+      final uri = Uri.parse(url);
+      String fileName = uri.pathSegments.last;
+      if (fileName.isEmpty || !fileName.contains('.')) {
+        fileName = 'prestasi_${DateTime.now().millisecondsSinceEpoch}';
+      }
+
+      // Get download directory
+      Directory? directory;
+      if (Platform.isAndroid) {
+        directory = await getExternalStorageDirectory();
+      } else {
+        directory = await getApplicationDocumentsDirectory();
+      }
+
+      if (directory == null) {
+        Get.back(); // Close loading dialog
+        Get.snackbar('Error', 'Cannot access device storage');
+        return;
+      }
+
+      // Create file path
+      final filePath = '${directory.path}/$fileName';
+
+      // Download file
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final file = File(filePath);
+        await file.writeAsBytes(response.bodyBytes);
+
+        Get.back(); // Close loading dialog
+
+        // Try to open file
+        final result = await OpenFile.open(filePath);
+        
+        if (result.type == ResultType.done) {
+          Get.snackbar(
+            'Success',
+            'Document opened successfully',
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
+        } else {
+          // If opening failed, show file location
+          Get.snackbar(
+            'Info',
+            'Document downloaded to: $filePath\nPlease open manually with a file manager.',
+            duration: const Duration(seconds: 5),
+            snackPosition: SnackPosition.BOTTOM,
+          );
+        }
+      } else {
+        Get.back(); // Close loading dialog
+        Get.snackbar('Error', 'Failed to download document');
+      }
+    } catch (e) {
+      Get.back(); // Close loading dialog if still open
       Get.snackbar(
         'Error',
-        'Tidak dapat membuka dokumen',
+        'Cannot open document: ${e.toString()}',
         snackPosition: SnackPosition.BOTTOM,
       );
     }
